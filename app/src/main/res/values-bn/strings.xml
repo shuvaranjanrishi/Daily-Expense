@@ -118,9 +118,12 @@
 
     <string name="msg_generating_report">রিপোর্ট তৈরি এবং ডাউনলোড হচ্ছে</string>
     <string name="msg_wait_excel">আপনার এক্সেল ফাইলটি তৈরি হতে কিছুটা সময় লাগবে। অনুগ্রহ করে কিছুক্ষণ অপেক্ষা করুন।</string>
-
-    <string name="label_please_wait">দয়া করে অপেক্ষা করুন...</string>
-    <string name="label_saving_data">আপনার তথ্য সংরক্ষণ করা হচ্ছে...</string>
+    <string name="download_report_title">রিপোর্ট ডাউনলোড করবেন?</string>
+    <string name="download_report_desc">আপনি কি লেনদেনের তালিকাটি এক্সেল ফাইল হিসেবে ডাউনলোড করতে চান?\n\nস্থান: Downloads/Daily Expense/Transaction Report</string>
+    <string name="btn_download">ডাউনলোড</string>
+    <string name="download_complete">ডাউনলোড সম্পন্ন হয়েছে!</string>
+    <string name="label_please_wait">দয়া করে অপেক্ষা করুন…</string>
+    <string name="label_saving_data">আপনার তথ্য সংরক্ষণ করা হচ্ছে…</string>
     <string name="msg_error">কিছু ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
 
     <string name="title_monthly_transactions">মাসিক লেনদেন</string>

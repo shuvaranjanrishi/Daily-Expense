@@ -118,9 +118,12 @@
 
     <string name="msg_generating_report">Generating &amp; Downloading Report</string>
     <string name="msg_wait_excel">Please wait while we prepare your Excel file. This won\'t take long.</string>
-
-    <string name="label_please_wait">Please Wait...</string>
-    <string name="label_saving_data">Saving Your Data...</string>
+    <string name="download_report_title">Download Report?</string>
+    <string name="download_report_desc">Do you want to download the transactions as an Excel file?\n\nLocation: Downloads/Daily Expense/Transaction Report</string>
+    <string name="btn_download">Download</string>
+    <string name="download_complete">Download Complete!</string>
+    <string name="label_please_wait">Please Wait…</string>
+    <string name="label_saving_data">Saving Your Data…</string>
     <string name="msg_error">Something went wrong. Please try again.</string>
 
     <string name="title_monthly_transactions">Monthly Transactions</string>
@@ -133,7 +136,7 @@
     <string name="label_month">Month:</string>
     <string name="action_apply">Apply</string>
 
-    <string name="placeholder_search_description">Search description...</string>
+    <string name="placeholder_search_description">Search description…</string>
     <string name="placeholder_filtered_by_date">Filtered by Date</string>
     <string name="title_all_transactions">All Transactions</string>
     <string name="btn_close">Close</string>

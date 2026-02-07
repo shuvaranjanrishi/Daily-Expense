@@ -1,21 +1,21 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ১. আগের জেনারেট হওয়া রুলগুলো (Suppress Warnings)
+-dontwarn com.google.errorprone.annotations.CanIgnoreReturnValue
+-dontwarn java.awt.**
+-dontwarn javax.xml.stream.**
+-dontwarn net.sf.saxon.**
+-dontwarn org.apache.batik.**
+-dontwarn org.osgi.framework.**
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# ২. Apache POI এবং অন্যান্য Excel লাইব্রেরির জন্য
+-dontwarn org.apache.poi.**
+-keep class org.apache.poi.** { *; }
+-keep class org.apache.xmlbeans.** { *; }
+-keep class javax.xml.stream.** { *; }
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# ৩. R8 কে জোরপূর্বক নির্দেশ দেওয়া যাতে সে এরর না দেয়
+-ignorewarnings
+-keepattributes *Annotation*, Signature, InnerClasses
+-dontnote **
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# ৪. আপনার মডেল ক্লাসগুলো সুরক্ষিত রাখা (যদি থাকে)
+-keep class com.therishideveloper.dailyexpense.models.** { *; }

@@ -133,23 +133,27 @@ fun AllTransactionScreen(
         )
     }
 
+    val msgDownloadComplete = stringResource(R.string.download_complete)
+
     // Confirmation Dialog
     if (showConfirmDialog) {
         AlertDialog(
             onDismissRequest = { showConfirmDialog = false },
-            title = { Text("Download Report?") },
-            text = { Text("Do you want to download the transactions as an Excel file?\n\nLocation: Downloads/Daily Expense/Transaction Report") },
+            title = { Text(stringResource(R.string.download_report_title)) },
+            text = { Text(stringResource(R.string.download_report_desc)) },
             confirmButton = {
                 Button(onClick = {
                     showConfirmDialog = false
                     downloadViewModel.downloadExcel(context, filteredTransactions) { file ->
-                        showToast(context, "Download Complete!")
+                        showToast(context, msgDownloadComplete)
                         showDownloadNotification(context, file)
                     }
-                }) { Text("Download") }
+                }) { Text(stringResource(R.string.btn_download)) }
             },
             dismissButton = {
-                TextButton(onClick = { showConfirmDialog = false }) { Text("Cancel") }
+                TextButton(onClick = {
+                    showConfirmDialog = false
+                }) { Text(stringResource(R.string.btn_cancel)) }
             }
         )
     }
