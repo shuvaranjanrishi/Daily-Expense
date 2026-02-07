@@ -49,19 +49,7 @@ fun TransactionListScreen(
 ) {
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
-    val isFabVisible by remember {
-        derivedStateOf {
-            val layoutInfo = lazyListState.layoutInfo
-            val totalItemsCount = layoutInfo.totalItemsCount
 
-            if (totalItemsCount == 0) {
-                true
-            } else {
-                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                lastVisibleItemIndex < totalItemsCount - 1
-            }
-        }
-    }
     val currentBalance by viewModel.currentBalance.collectAsStateWithLifecycle()
 
     var date by remember { mutableLongStateOf(System.currentTimeMillis()) }
@@ -137,6 +125,33 @@ fun TransactionListScreen(
             }
 
             else -> allRecords
+        }
+    }
+
+    val isFabVisible by remember(transactions) {
+        derivedStateOf {
+            val layoutInfo = lazyListState.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+
+            if (visibleItems.isEmpty()) {
+                true
+            } else {
+                val lastItem = visibleItems.lastOrNull()
+                val totalItemsCount = layoutInfo.totalItemsCount
+
+                if (lastItem != null && lastItem.index == totalItemsCount - 1) {
+                    val viewportEnd = layoutInfo.viewportEndOffset
+                    val fabTopBoundary = viewportEnd - 250 // বাটনের উপরের সীমানা
+                    val fabBottomBoundary = viewportEnd - 50 // বাটনের নিচের সীমানা
+                    val itemTop = lastItem.offset
+                    val itemBottom = lastItem.offset + lastItem.size
+                    val isOverlapping = itemBottom > fabTopBoundary && itemTop < fabBottomBoundary
+
+                    !isOverlapping
+                } else {
+                    true
+                }
+            }
         }
     }
 

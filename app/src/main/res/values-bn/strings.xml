@@ -125,6 +125,9 @@
     <string name="label_please_wait">দয়া করে অপেক্ষা করুন…</string>
     <string name="label_saving_data">আপনার তথ্য সংরক্ষণ করা হচ্ছে…</string>
     <string name="msg_error">কিছু ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।</string>
+    <string name="share_report_title">রিপোর্ট শেয়ার করবেন?</string>
+    <string name="share_report_desc">আপনি কি লেনদেনের রিপোর্টটি এক্সেল ফাইল হিসেবে শেয়ার করতে চান?</string>
+    <string name="btn_share">শেয়ার করুন</string>
 
     <string name="title_monthly_transactions">মাসিক লেনদেন</string>
     <string name="title_yearly_transactions">বার্ষিক লেনদেন</string>

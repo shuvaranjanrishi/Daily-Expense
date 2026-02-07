@@ -125,6 +125,9 @@
     <string name="label_please_wait">Please Wait…</string>
     <string name="label_saving_data">Saving Your Data…</string>
     <string name="msg_error">Something went wrong. Please try again.</string>
+    <string name="share_report_title">Share Report?</string>
+    <string name="share_report_desc">Do you want to share the transaction report as an Excel file?</string>
+    <string name="btn_share">Share</string>
 
     <string name="title_monthly_transactions">Monthly Transactions</string>
     <string name="title_yearly_transactions">Yearly Transactions</string>

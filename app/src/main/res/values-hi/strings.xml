@@ -125,6 +125,9 @@
     <string name="label_please_wait">कृपया प्रतीक्षा करें…</string>
     <string name="label_saving_data">आपका डेटा सहेजा जा रहा है…</string>
     <string name="msg_error">कुछ गलत हो गया। कृपया पुन: प्रयास करें।</string>
+    <string name="share_report_title">रिपोर्ट साझा करें?</string>
+    <string name="share_report_desc">क्या आप ट्रांजेक्शन रिपोर्ट को एक्सेल फ़ाइल के रूप में साझा करना चाहते हैं?</string>
+    <string name="btn_share">साझा करें</string>
 
     <string name="title_monthly_transactions">मासिक लेनदेन</string>
     <string name="title_yearly_transactions">वार्षिक लेनदेन</string>

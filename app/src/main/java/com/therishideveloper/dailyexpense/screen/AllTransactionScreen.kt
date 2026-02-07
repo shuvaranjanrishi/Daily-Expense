@@ -11,7 +11,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.therishideveloper.dailyexpense.component.TransactionSummaryRow
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,9 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.therishideveloper.dailyexpense.component.SolidPieChart
 import com.therishideveloper.dailyexpense.component.TransactionItemWithActions
-import com.therishideveloper.dailyexpense.ui.theme.expenseRed
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.DateUtils
 import com.therishideveloper.dailyexpense.viewmodel.TransactionViewModel
@@ -132,29 +129,37 @@ fun AllTransactionScreen(
             onDismiss = { showDetailSheet = false }
         )
     }
-
     val msgDownloadComplete = stringResource(R.string.download_complete)
 
-    // Confirmation Dialog
-    if (showConfirmDialog) {
-        AlertDialog(
-            onDismissRequest = { showConfirmDialog = false },
-            title = { Text(stringResource(R.string.download_report_title)) },
-            text = { Text(stringResource(R.string.download_report_desc)) },
-            confirmButton = {
-                Button(onClick = {
-                    showConfirmDialog = false
-                    downloadViewModel.downloadExcel(context, filteredTransactions) { file ->
-                        showToast(context, msgDownloadComplete)
-                        showDownloadNotification(context, file)
-                    }
-                }) { Text(stringResource(R.string.btn_download)) }
+    var showDownloadDialog by remember { mutableStateOf(false) }
+    var showShareDialog by remember { mutableStateOf(false) }
+
+    if (showDownloadDialog) {
+        ReusableConfirmDialog(
+            title = stringResource(R.string.download_report_title),
+            message = stringResource(R.string.download_report_desc),
+            confirmBtnText = stringResource(R.string.btn_download),
+            onConfirm = {
+                showDownloadDialog = false
+                downloadViewModel.downloadExcel(context, filteredTransactions) { file ->
+                    showToast(context, msgDownloadComplete)
+                    showDownloadNotification(context, file)
+                }
             },
-            dismissButton = {
-                TextButton(onClick = {
-                    showConfirmDialog = false
-                }) { Text(stringResource(R.string.btn_cancel)) }
-            }
+            onDismiss = { showDownloadDialog = false }
+        )
+    }
+
+    if (showShareDialog) {
+        ReusableConfirmDialog(
+            title = stringResource(R.string.share_report_title),
+            message = stringResource(R.string.share_report_desc),
+            confirmBtnText = stringResource(R.string.btn_share),
+            onConfirm = {
+                showShareDialog = false
+                downloadViewModel.shareExcel(filteredTransactions, context)
+            },
+            onDismiss = { showShareDialog = false }
         )
     }
 
@@ -166,12 +171,8 @@ fun AllTransactionScreen(
         topBar = {
             AllTransactionTopBar(
                 onBack = onBack,
-                onDownload = {
-                    showConfirmDialog = true
-                },
-                onShare = {
-                    downloadViewModel.shareExcel(filteredTransactions, context)
-                }
+                onDownload = { showDownloadDialog = true },
+                onShare = { showShareDialog = true }
             )
         }
     ) { padding ->
@@ -380,4 +381,25 @@ fun TransactionTabRow(selectedTab: Int, onTabSelected: (Int) -> Unit) {
             )
         }
     }
+}
+
+@Composable
+fun ReusableConfirmDialog(
+    title: String,
+    message: String,
+    confirmBtnText: String,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(title) },
+        text = { Text(message) },
+        confirmButton = {
+            Button(onClick = onConfirm) { Text(confirmBtnText) }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.btn_cancel)) }
+        }
+    )
 }

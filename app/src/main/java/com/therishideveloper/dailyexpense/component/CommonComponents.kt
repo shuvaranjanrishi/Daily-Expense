@@ -139,55 +139,6 @@ fun SolidPieChart(
     }
 }
 
-//@Composable
-//fun SummaryCard(
-//    totalIncome: Double,
-//    totalExpense: Double,
-//    balance: Double,
-//    incomeProgress: Float
-//) {
-//
-//    Card(
-//        modifier = Modifier
-//            .padding(8.dp)
-//            .fillMaxWidth(),
-//        colors = CardDefaults.cardColors(containerColor = Color.White),
-//        elevation = CardDefaults.cardElevation(4.dp)
-//    ) {
-//        Row(
-//            modifier = Modifier.padding(16.dp),
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Box(modifier = Modifier.size(110.dp), contentAlignment = Alignment.Center) {
-//                SolidPieChart(
-//                    incomeProgress = incomeProgress,
-//                    incomeColor = tealColor,
-//                    expenseColor = expenseRed
-//                )
-//            }
-//            Spacer(modifier = Modifier.width(16.dp))
-//            Column(modifier = Modifier.weight(1f)) {
-//                TransactionSummaryRow(
-//                    stringResource(R.string.income),
-//                    totalIncome.toString(),
-//                    tealColor
-//                )
-//                TransactionSummaryRow(
-//                    stringResource(R.string.expense),
-//                    totalExpense.toString(),
-//                    expenseRed
-//                )
-//                HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
-//                TransactionSummaryRow(
-//                    stringResource(R.string.balance),
-//                    balance.toString(),
-//                    tealColor
-//                )
-//            }
-//        }
-//    }
-//}
-
 @Composable
 fun TransactionSummaryRow(
     label: String,

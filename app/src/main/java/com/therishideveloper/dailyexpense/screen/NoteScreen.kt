@@ -50,19 +50,6 @@ fun NoteScreen(
 ) {
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
-    val isFabVisible by remember {
-        derivedStateOf {
-            val layoutInfo = lazyListState.layoutInfo
-            val totalItemsCount = layoutInfo.totalItemsCount
-
-            if (totalItemsCount == 0) {
-                true
-            } else {
-                val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-                lastVisibleItemIndex < totalItemsCount - 1
-            }
-        }
-    }
 
     // --- Screen States ---
     var selectedFilter by remember { mutableStateOf("All") }
@@ -78,6 +65,33 @@ fun NoteScreen(
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val notes by noteViewModel.notes.collectAsState()
     val currentBalance = transactionViewModel.currentBalance.collectAsStateWithLifecycle()
+
+    val isFabVisible by remember(notes) {
+        derivedStateOf {
+            val layoutInfo = lazyListState.layoutInfo
+            val visibleItems = layoutInfo.visibleItemsInfo
+
+            if (visibleItems.isEmpty()) {
+                true
+            } else {
+                val lastItem = visibleItems.lastOrNull()
+                val totalItemsCount = layoutInfo.totalItemsCount
+
+                if (lastItem != null && lastItem.index == totalItemsCount - 1) {
+                    val viewportEnd = layoutInfo.viewportEndOffset
+                    val fabTopBoundary = viewportEnd - 250 // বাটনের উপরের সীমানা
+                    val fabBottomBoundary = viewportEnd - 50 // বাটনের নিচের সীমানা
+                    val itemTop = lastItem.offset
+                    val itemBottom = lastItem.offset + lastItem.size
+                    val isOverlapping = itemBottom > fabTopBoundary && itemTop < fabBottomBoundary
+
+                    !isOverlapping
+                } else {
+                    true
+                }
+            }
+        }
+    }
 
     val filteredList = when (selectedFilter) {
         NoteType.DEBT.dbKey -> notes.filter { it.type == NoteType.DEBT.dbKey }
