@@ -39,6 +39,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,6 +56,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.therishideveloper.dailyexpense.component.DrawerHeader
@@ -62,11 +64,13 @@ import com.therishideveloper.dailyexpense.component.LanguageDialog
 import com.therishideveloper.dailyexpense.navigation.AppNavigation
 import com.therishideveloper.dailyexpense.navigation.Screens
 import com.therishideveloper.dailyexpense.navigation.listOfNavItems
+import com.therishideveloper.dailyexpense.screen.SplashScreen
 import com.therishideveloper.dailyexpense.ui.theme.NavigationDrawerTheme
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.LocaleHelper
 import com.therishideveloper.dailyexpense.util.shareApp
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -79,15 +83,25 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         val savedLang = LocaleHelper.getSavedLocale(this)
-        LocaleHelper.applyLocale(this,savedLang)
+        LocaleHelper.applyLocale(this, savedLang)
 
         setContent {
             NavigationDrawerTheme {
+                var showSplash by remember { mutableStateOf(true) }
+
+                LaunchedEffect(Unit) {
+                    delay(4000)
+                    showSplash = false
+                }
+
                 Surface(color = MaterialTheme.colorScheme.background) {
-                    SetupNavigation()
+                    if (showSplash) {
+                        SplashScreen()
+                    } else {
+                        SetupNavigation()
+                    }
                 }
             }
-//
         }
     }
 
@@ -104,12 +118,13 @@ class MainActivity : ComponentActivity() {
         var showLanguageDialog by remember { mutableStateOf(false) }
         val context = LocalContext.current
 
+
         ModalNavigationDrawer(
             gesturesEnabled = isHome,
             drawerContent = {
-                ModalDrawerSheet (
+                ModalDrawerSheet(
                     windowInsets = WindowInsets(0, 0, 0, 0)
-                ){
+                ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
@@ -214,12 +229,13 @@ class MainActivity : ComponentActivity() {
             })
         }
 
+
         if (showLanguageDialog) {
             LanguageDialog(
                 currentLanguageCode = LocaleHelper.getSavedLocale(context),
                 onDismiss = { showLanguageDialog = false },
                 onLanguageSelected = { selectedCode ->
-                    LocaleHelper.applyLocale(this,selectedCode)
+                    LocaleHelper.applyLocale(this, selectedCode)
                     (context as? Activity)?.recreate()
                     showLanguageDialog = false
                 }
