@@ -27,6 +27,7 @@ import com.therishideveloper.dailyexpense.ui.theme.expenseRed
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.DateUtils
 import com.therishideveloper.dailyexpense.util.NumberUtils
+import kotlin.toString
 
 @Composable
 fun DownloadLoaderDialog() {
@@ -128,11 +129,10 @@ fun TransactionItem(transaction: Transaction) {
                     color = Color.Gray
                 )
             }
-            val formattedAmount = String.format(java.util.Locale.US, "%.2f", transaction.amount)
             Text(
-                text = (if (isIncome) "+ " else "- ") + stringResource(R.string.currency_symbol) + NumberUtils.formatByLocale(
+                text = (if (isIncome) "+ " else "- ") + NumberUtils.formatAmountByLocale(
                     context,
-                    formattedAmount
+                    transaction.amount.toString()
                 ),
                 fontWeight = FontWeight.Bold,
                 color = if (isIncome) tealColor else expenseRed,
@@ -200,7 +200,7 @@ fun TransactionItemWithActions(
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = (if (isIncome) "+" else "-") + NumberUtils.formatByLocale(
+                    text = (if (isIncome) "+" else "-") + NumberUtils.formatAmountByLocale(
                         context,
                         transaction.amount.toString()
                     ),

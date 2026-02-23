@@ -4,19 +4,25 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
@@ -43,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -50,6 +57,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.therishideveloper.dailyexpense.component.DrawerHeader
 import com.therishideveloper.dailyexpense.component.LanguageDialog
 import com.therishideveloper.dailyexpense.navigation.AppNavigation
 import com.therishideveloper.dailyexpense.navigation.Screens
@@ -65,9 +73,10 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        enableEdgeToEdge()
 
         val savedLang = LocaleHelper.getSavedLocale(this)
         LocaleHelper.applyLocale(this,savedLang)
@@ -78,6 +87,7 @@ class MainActivity : ComponentActivity() {
                     SetupNavigation()
                 }
             }
+//
         }
     }
 
@@ -97,7 +107,9 @@ class MainActivity : ComponentActivity() {
         ModalNavigationDrawer(
             gesturesEnabled = isHome,
             drawerContent = {
-                ModalDrawerSheet {
+                ModalDrawerSheet (
+                    windowInsets = WindowInsets(0, 0, 0, 0)
+                ){
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(0.8f)
@@ -175,7 +187,7 @@ class MainActivity : ComponentActivity() {
                                     },
                                     modifier = Modifier
                                         .padding(NavigationDrawerItemDefaults.ItemPadding)
-                                        .fillMaxWidth(0.8f)
+                                        .fillMaxWidth()
                                 )
                             }
 
@@ -212,58 +224,6 @@ class MainActivity : ComponentActivity() {
                     showLanguageDialog = false
                 }
             )
-        }
-    }
-
-    @Composable
-    fun DrawerHeader() {
-        Column {
-            Box(
-                modifier = Modifier
-                    .height(160.dp)
-                    .fillMaxWidth()
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(tealColor, Color(0xFF004D40))
-                        )
-                    ),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.app_logo),
-                        contentDescription = null,
-                        modifier = Modifier
-                            .size(60.dp)
-                            .clip(CircleShape)
-                            .background(Color.White)
-                            .padding(12.dp)
-                    )
-
-                    Spacer(modifier = Modifier.width(16.dp))
-
-                    Column {
-                        Text(
-                            text = stringResource(R.string.app_name),
-                            style = MaterialTheme.typography.titleLarge.copy(
-                                fontWeight = FontWeight.Bold,
-                                color = Color.White
-                            )
-                        )
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = stringResource(R.string.about_slogan),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = Color.White.copy(alpha = 0.9f)
-                            )
-                        )
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }

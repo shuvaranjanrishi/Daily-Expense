@@ -21,6 +21,7 @@ import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import android.graphics.Paint
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -159,7 +160,7 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
                             color = Color.Gray
                         )
                         Text(
-                            stringResource(R.string.currency_symbol) + NumberUtils.formatByLocale(
+                            NumberUtils.formatAmountByLocale(
                                 context,
                                 totalAmount.toString()
                             ),
@@ -331,7 +332,7 @@ fun CategoryStatItem(
                         fontSize = 15.sp
                     )
                     Text(
-                        stringResource(R.string.currency_symbol) + NumberUtils.formatByLocale(
+                        NumberUtils.formatAmountByLocale(
                             context,
                             amount.toString()
                         ), fontWeight = FontWeight.Bold, color = Color.DarkGray

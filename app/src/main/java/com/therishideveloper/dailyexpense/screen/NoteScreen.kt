@@ -40,6 +40,7 @@ import com.therishideveloper.dailyexpense.util.DateUtils
 import com.therishideveloper.dailyexpense.util.NumberUtils
 import com.therishideveloper.dailyexpense.viewmodel.NoteViewModel
 import com.therishideveloper.dailyexpense.viewmodel.TransactionViewModel
+import kotlin.toString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -168,12 +169,12 @@ fun NoteScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         TransactionSummaryRow(
                             stringResource(R.string.label_total_debt),
-                            "$totalDebt",
+                            totalDebt.toString(),
                             expenseRed
                         )
                         TransactionSummaryRow(
                             stringResource(R.string.label_total_receivable),
-                            "$totalReceivable",
+                            totalReceivable.toString(),
                             tealColor
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
@@ -181,10 +182,7 @@ fun NoteScreen(
                             if (balanceAmount >= 0) stringResource(R.string.label_net_receivable) else stringResource(
                                 R.string.label_net_debt
                             ),
-                            NumberUtils.formatByLocale(
-                                context,
-                                kotlin.math.abs(balanceAmount).toString()
-                            ),
+                            balanceAmount.toString(),
                             if (balanceAmount >= 0) tealColor else expenseRed
                         )
                     }

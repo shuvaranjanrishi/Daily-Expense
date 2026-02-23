@@ -86,7 +86,8 @@ fun HomeScreen(
                         )
                     }
                 },
-                actions = { CurrentBalance(currentBalance.toString()) }
+                actions = { CurrentBalance(currentBalance.toString()) },
+                windowInsets = TopAppBarDefaults.windowInsets
             )
         },
         floatingActionButton = {
@@ -127,7 +128,7 @@ fun HomeScreen(
                     Column(modifier = Modifier.weight(1f)) {
                         SummaryClickableRow(
                             stringResource(R.string.income),
-                            NumberUtils.formatByLocale(context, totalIncome.toString()),
+                            totalIncome.toString(),
                             tealColor
                         ) {
                             navController.navigate("income_expense_screen/" + TransactionType.INCOME.dbKey)
@@ -135,7 +136,7 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         SummaryClickableRow(
                             stringResource(R.string.expense),
-                            NumberUtils.formatByLocale(context, totalExpense.toString()),
+                            totalExpense.toString(),
                             expenseRed
                         ) {
                             navController.navigate("income_expense_screen/" + TransactionType.EXPENSE.dbKey)
@@ -143,7 +144,7 @@ fun HomeScreen(
                         HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         TransactionSummaryRow(
                             stringResource(R.string.balance),
-                            NumberUtils.formatByLocale(context, balance.toString()),
+                            balance.toString(),
                             tealColor
                         )
                     }

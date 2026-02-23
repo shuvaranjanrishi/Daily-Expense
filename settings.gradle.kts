@@ -20,5 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Daily Expense"
-// settings.gradle.kts এর নিচে এই লাইনটি দিন
 include(":app")

@@ -39,9 +39,7 @@ import java.util.Locale
 fun CurrentBalance(currentBalance: String) {
     val context = LocalContext.current
     val displayBalance = try {
-        val amount = currentBalance.toDoubleOrNull() ?: 0.0
-        val formattedAmount = String.format(Locale.US, "%.2f", amount)
-        NumberUtils.formatByLocale(context, formattedAmount)
+        NumberUtils.formatAmountByLocale(context, currentBalance)
     } catch (e: Exception) {
         NumberUtils.formatByLocale(context, "0.00")
     }
@@ -56,7 +54,7 @@ fun CurrentBalance(currentBalance: String) {
             color = Color.White.copy(alpha = 0.8f)
         )
         Text(
-            stringResource(R.string.currency_symbol) + displayBalance,
+            displayBalance,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
             color = Color.White
@@ -154,7 +152,7 @@ fun TransactionSummaryRow(
     ) {
         Text(text = label, fontWeight = FontWeight.Bold, color = labelColor, fontSize = 13.sp)
         Text(
-            text = stringResource(id = R.string.currency_symbol) + NumberUtils.formatByLocale(context,amount),
+            text = NumberUtils.formatAmountByLocale(context, amount),
             fontWeight = FontWeight.Bold
         )
     }
