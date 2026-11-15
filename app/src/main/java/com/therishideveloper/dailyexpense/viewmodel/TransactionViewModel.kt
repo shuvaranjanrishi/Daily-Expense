@@ -15,6 +15,7 @@ import com.therishideveloper.dailyexpense.domain.repository.TransactionRepositor
 import com.therishideveloper.dailyexpense.util.BackupHelper
 import com.therishideveloper.dailyexpense.util.DateUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -131,57 +133,41 @@ class TransactionViewModel @Inject constructor(
 
     fun exportBackup(onResult: (Uri?) -> Unit) {
         viewModelScope.launch {
-            try {
-                val transactions = transactionRepo.getAllTransactionsList()
-                val notes = noteRepo.getAllNotesList()
-                val backupData = AppBackupData(transactions, notes)
-                val uri = backupHelper.createBackup(backupData)
-                onResult(uri)
-            } catch (e: Exception) {
-                onResult(null)
-            }
-        }
-    }
-
-    fun importBackup(uri: Uri) {
-        viewModelScope.launch {
-            try {
-                val backupData = backupHelper.restoreBackup(uri)
-                if (backupData != null && (backupData.transactions != null || backupData.notes != null)) {
-                    transactionRepo.deleteAllTransactions()
-                    noteRepo.deleteAllNotes()
-                    backupData.transactions.orEmpty().forEach { transactionRepo.insert(it) }
-                    backupData.notes.orEmpty().forEach { noteRepo.insertNote(it) }
+            val uri = try {
+                withContext(Dispatchers.IO) {
+                    val transactions = transactionRepo.getAllTransactionsList()
+                    val notes = noteRepo.getAllNotesList()
+                    val backupData = AppBackupData(transactions, notes)
+                    backupHelper.createBackup(backupData)
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                null
             }
+            onResult(uri)
         }
     }
-//
-//    fun exportBackup(onResult: (Uri?) -> Unit) {
-//        viewModelScope.launch {
-//            try {
-//                val transactions = repository.getAllTransactionsList()
-//                val uri = backupHelper.createBackup(transactions)
-//                onResult(uri)
-//            } catch (e: Exception) {
-//                onResult(null)
-//            }
-//        }
-//    }
-//
-//    fun importBackup(uri: Uri) {
-//        viewModelScope.launch {
-//            try {
-//                val transactions = backupHelper.restoreBackup(uri)
-//                if (transactions != null) {
-//                    repository.deleteAllTransactions()
-//                    transactions.forEach { repository.insert(it) }
-//                }
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
-//        }
-//    }
+
+    fun importBackup(uri: Uri, onResult: (Boolean) -> Unit = {}) {
+        viewModelScope.launch {
+            val success = try {
+                withContext(Dispatchers.IO) {
+                    val backupData = backupHelper.restoreBackup(uri)
+                    if (backupData != null && (backupData.transactions != null || backupData.notes != null)) {
+                        transactionRepo.deleteAllTransactions()
+                        noteRepo.deleteAllNotes()
+                        backupData.transactions.orEmpty().forEach { transactionRepo.insert(it) }
+                        backupData.notes.orEmpty().forEach { noteRepo.insertNote(it) }
+                        true
+                    } else {
+                        false
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                false
+            }
+            onResult(success)
+        }
+    }
 }

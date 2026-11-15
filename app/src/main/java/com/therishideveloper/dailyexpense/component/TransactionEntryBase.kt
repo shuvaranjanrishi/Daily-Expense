@@ -6,7 +6,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.therishideveloper.dailyexpense.R
 import com.therishideveloper.dailyexpense.data.entity.Transaction
 import com.therishideveloper.dailyexpense.data.model.TransactionType
@@ -22,9 +21,10 @@ fun TransactionEntryBase(
     val context = LocalContext.current
     val currentBalance by viewModel.currentBalance.collectAsStateWithLifecycle()
     val allTransactions by viewModel.allTransactions.collectAsStateWithLifecycle()
+    val defaultDate = remember { System.currentTimeMillis() }
 
     val transactionToEdit = remember(transactionId, allTransactions) {
-        allTransactions.find { it.id == transactionId }
+        if (transactionId == null) null else allTransactions.find { it.id == transactionId }
     }
 
     val screenTitle = if (transactionId != null) {
@@ -55,37 +55,41 @@ fun TransactionEntryBase(
         }
     }
 
-    AddEditForm(
-        title = screenTitle,
-        buttonText = buttonLabel,
-        transactionType = transactionType,
-        transactionId = transactionId,
-        initialCategory = transactionToEdit?.category ?: "",
-        initialDescription = transactionToEdit?.description ?: "",
-        initialAmount = transactionToEdit?.amount?.toString() ?: "",
-        initialDate = transactionToEdit?.date ?: System.currentTimeMillis(),
-        onSave = { category, description, amount, date ->
-            val transaction = Transaction(
-                id = transactionId ?: 0,
-                category = category,
-                description = description,
-                amount = amount.toDoubleOrNull() ?: 0.0,
-                date = date,
-                transactionType = transactionType.dbKey
-            )
+    if (transactionId == null || transactionToEdit != null) {
+        AddEditForm(
+            title = screenTitle,
+            buttonText = buttonLabel,
+            transactionType = transactionType,
+            transactionId = transactionId,
+            initialCategory = transactionToEdit?.category ?: "",
+            initialDescription = transactionToEdit?.description ?: "",
+            initialAmount = transactionToEdit?.amount?.let {
+                if (it % 1.0 == 0.0) it.toLong().toString() else it.toString()
+            } ?: "",
+            initialDate = transactionToEdit?.date ?: defaultDate,
+            onSave = { category, description, amount, date ->
+                val transaction = Transaction(
+                    id = transactionId ?: 0,
+                    category = category,
+                    description = description,
+                    amount = amount.toDoubleOrNull() ?: 0.0,
+                    date = date,
+                    transactionType = transactionType.dbKey
+                )
 
-            if (transactionId == null) {
-                viewModel.addTransaction(context,transaction)
-            } else {
-                viewModel.updateTransaction(context,transaction)
-            }
-        },
-        onDelete = {
-            transactionToEdit?.let { transaction ->
-                viewModel.deleteTransaction(context,transaction)
-            }
-        },
-        onBack = onBack,
-        currentBalance = currentBalance.toString()
-    )
+                if (transactionId == null) {
+                    viewModel.addTransaction(context, transaction)
+                } else {
+                    viewModel.updateTransaction(context, transaction)
+                }
+            },
+            onDelete = {
+                transactionToEdit?.let { transaction ->
+                    viewModel.deleteTransaction(context, transaction)
+                }
+            },
+            onBack = onBack,
+            currentBalance = (currentBalance ?: 0.0).toString()
+        )
+    }
 }

@@ -43,7 +43,6 @@ import com.therishideveloper.dailyexpense.util.DateUtils
 import com.therishideveloper.dailyexpense.util.NumberUtils
 import com.therishideveloper.dailyexpense.viewmodel.NoteViewModel
 import com.therishideveloper.dailyexpense.viewmodel.TransactionViewModel
-import kotlin.toString
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -97,18 +96,25 @@ fun NoteScreen(
         }
     }
 
-    val filteredList = when (selectedFilter) {
-        NoteType.DEBT.dbKey -> notes.filter { it.type == NoteType.DEBT.dbKey }
-        NoteType.RECEIVABLE.dbKey -> notes.filter { it.type == NoteType.RECEIVABLE.dbKey }
-        else -> notes
+    val filteredList = remember(notes, selectedFilter) {
+        when (selectedFilter) {
+            NoteType.DEBT.dbKey -> notes.filter { it.type == NoteType.DEBT.dbKey }
+            NoteType.RECEIVABLE.dbKey -> notes.filter { it.type == NoteType.RECEIVABLE.dbKey }
+            else -> notes
+        }
     }
 
-    val totalDebt = filteredList.filter { it.type == NoteType.DEBT.dbKey }.sumOf { it.amount }
-    val totalReceivable =
+    val totalDebt = remember(filteredList) {
+        filteredList.filter { it.type == NoteType.DEBT.dbKey }.sumOf { it.amount }
+    }
+    val totalReceivable = remember(filteredList) {
         filteredList.filter { it.type == NoteType.RECEIVABLE.dbKey }.sumOf { it.amount }
+    }
     val balanceAmount = totalReceivable - totalDebt
     val totalSum = totalDebt + totalReceivable
-    val incomeProgress = if (totalSum > 0) (totalReceivable / totalSum).toFloat() else 0.5f
+    val incomeProgress = remember(totalSum, totalReceivable) {
+        if (totalSum > 0) (totalReceivable / totalSum).toFloat() else 0.5f
+    }
 
     Scaffold(
         topBar = {
@@ -292,16 +298,20 @@ fun NoteScreen(
                         }
                     }, { showCalculator = true },
                     onSave = {
-                        if (noteAmount.isNotEmpty() && noteDesc.isNotEmpty()) {
+                        val parsedAmount = noteAmount.trim().toDoubleOrNull()
+                        val trimmedDesc = noteDesc.trim()
+                        if (parsedAmount != null && parsedAmount > 0.0 && trimmedDesc.isNotEmpty()) {
                             noteViewModel.saveNote(
                                 Note(
-                                    amount = noteAmount.toDouble(),
-                                    description = noteDesc,
+                                    amount = parsedAmount,
+                                    description = trimmedDesc,
                                     date = noteDate,
                                     type = noteType.dbKey
                                 )
                             )
-                            noteAmount = ""; noteDesc = ""; showSheet = false
+                            noteAmount = ""
+                            noteDesc = ""
+                            showSheet = false
                         }
                     },
                     tealColor

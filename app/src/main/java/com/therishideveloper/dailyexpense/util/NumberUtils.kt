@@ -7,23 +7,13 @@ import java.util.Locale
 
 object NumberUtils {
 
+    private val BN_DIGITS = charArrayOf('০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯')
+    private val HI_DIGITS = charArrayOf('०', '१', '२', '३', '४', '५', '६', '७', '८', '९')
+    private val EN_IN_LOCALE = Locale.forLanguageTag("en-IN")
+
     fun formatByLocale(context: Context, input: String): String {
         val language = LocaleHelper.getCurrentLocale(context).language
-
-        if (language != "bn" && language != "hi") return input
-
-        val bnDigits = charArrayOf('০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯')
-        val hiDigits = charArrayOf('०', '१', '२', '३', '४', '५', '६', '७', '८', '९')
-
-        val targetDigits = if (language == "bn") bnDigits else hiDigits
-
-        return input.map { char ->
-            if (char in '0'..'9') {
-                targetDigits[char - '0']
-            } else {
-                char
-            }
-        }.joinToString("")
+        return convertDigits(input, language)
     }
 
     fun formatAmountByLocale(context: Context, input: String): String {
@@ -31,7 +21,7 @@ object NumberUtils {
         val amount = cleanInput.toDoubleOrNull() ?: return input
         val language = LocaleHelper.getCurrentLocale(context).language
 
-        val commaFormatter = NumberFormat.getInstance(Locale.forLanguageTag("en-IN")).apply {
+        val commaFormatter = NumberFormat.getInstance(EN_IN_LOCALE).apply {
             maximumFractionDigits = 2
             minimumFractionDigits = if (amount == 0.0) 1 else 0
         }
@@ -45,13 +35,15 @@ object NumberUtils {
 
     private fun convertDigits(input: String, language: String): String {
         val digits = when (language) {
-            "bn" -> charArrayOf('০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯')
-            "hi" -> charArrayOf('०', '१', '२', '३', '४', '५', '६', '७', '८', '९')
+            "bn" -> BN_DIGITS
+            "hi" -> HI_DIGITS
             else -> return input
         }
 
-        return input.map { char ->
-            if (char in '0'..'9') digits[char - '0'] else char
-        }.joinToString("")
+        return buildString(input.length) {
+            for (ch in input) {
+                append(if (ch in '0'..'9') digits[ch - '0'] else ch)
+            }
+        }
     }
 }

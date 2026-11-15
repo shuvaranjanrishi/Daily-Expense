@@ -41,8 +41,8 @@ fun CalculatorDialog(
     var result by remember { mutableStateOf(initialResult) }
 
     // Drag and Scroll states
-    var offsetX by remember { mutableStateOf(0f) }
-    var offsetY by remember { mutableStateOf(0f) }
+    var offsetX by remember { mutableFloatStateOf(0f) }
+    var offsetY by remember { mutableFloatStateOf(0f) }
     var isDragging by remember { mutableStateOf(false) }
     val scrollState = rememberScrollState()
 
@@ -170,23 +170,55 @@ fun CalculatorDialog(
 }
 
 private fun simpleEvaluate(expr: String): String {
+    val sanitized = expr.trimEnd('+', '-', '*', '/', '.')
+    if (sanitized.isEmpty()) return "0"
+
     return try {
-        val tokens = expr.split(Regex("(?<=[-+*/])|(?=[-+*/])"))
-        if (tokens.isEmpty() || tokens[0].isEmpty()) return "0"
-        var total = tokens[0].toDouble()
-        for (i in 1 until tokens.size step 2) {
-            val op = tokens[i]
-            val next = tokens[i + 1].toDouble()
+        val tokens = mutableListOf<String>()
+        val current = StringBuilder()
+        for (i in sanitized.indices) {
+            val ch = sanitized[i]
+            val isUnarySign = (ch == '-' || ch == '+') &&
+                (i == 0 || sanitized[i - 1] in charArrayOf('+', '-', '*', '/'))
+            if (ch in charArrayOf('+', '-', '*', '/') && !isUnarySign) {
+                if (current.isNotEmpty()) {
+                    tokens.add(current.toString())
+                    current.clear()
+                }
+                tokens.add(ch.toString())
+            } else {
+                current.append(ch)
+            }
+        }
+        if (current.isNotEmpty()) {
+            tokens.add(current.toString())
+        }
+        if (tokens.isEmpty()) return "0"
+
+        var total = tokens[0].toDoubleOrNull() ?: return "0"
+        var index = 1
+        while (index + 1 < tokens.size) {
+            val op = tokens[index]
+            val next = tokens[index + 1].toDoubleOrNull() ?: break
             when (op) {
                 "+" -> total += next
                 "-" -> total -= next
                 "*" -> total *= next
-                "/" -> if (next != 0.0) total /= next
+                "/" -> {
+                    if (next == 0.0) return "0"
+                    total /= next
+                }
             }
+            index += 2
         }
-        if (total % 1 == 0.0) total.toLong().toString() else "%.2f".format(total)
-    } catch (e: Exception) {
-        "0: ${e.message}"
+        if (total.isNaN() || total.isInfinite()) return "0"
+        if (total % 1.0 == 0.0) {
+            total.toLong().toString()
+        } else {
+            String.format(java.util.Locale.US, "%.2f", total).trimEnd('0').trimEnd('.')
+        }
+    } catch (_: Exception) {
+        "0"
     }
 }
 
@@ -218,7 +250,8 @@ private fun handleCalculatorAction(
 
     when (action) {
         is CalcAction.Clear -> {
-            newExpr = ""; newResult = "0"
+            newExpr = ""
+            newResult = "0"
         }
 
         is CalcAction.Delete -> {
@@ -226,19 +259,29 @@ private fun handleCalculatorAction(
         }
 
         is CalcAction.Calculate -> {
-            newResult = try {
-                simpleEvaluate(newExpr)
-            } catch (e: Exception) {
-                "Error: " + e.message
-            }
+            newResult = simpleEvaluate(newExpr)
         }
 
         is CalcAction.Decimal -> {
-            if (!newExpr.endsWith(".")) newExpr += "."
+            val lastNumber = newExpr.takeLastWhile { it !in charArrayOf('+', '-', '*', '/') }
+            if (!lastNumber.contains('.')) {
+                newExpr += if (lastNumber.isEmpty()) "0." else "."
+            }
         }
 
         is CalcAction.Number -> newExpr += action.value
-        is CalcAction.Operation -> newExpr += action.op
+        is CalcAction.Operation -> {
+            val operators = charArrayOf('+', '-', '*', '/')
+            if (newExpr.isEmpty()) {
+                if (action.op == "-") newExpr = "-"
+            } else if (newExpr == "-") {
+                if (action.op == "+") newExpr = ""
+            } else if (newExpr.last() in operators) {
+                newExpr = newExpr.dropLast(1) + action.op
+            } else {
+                newExpr += action.op
+            }
+        }
     }
     onUpdate(newExpr, newResult)
 }

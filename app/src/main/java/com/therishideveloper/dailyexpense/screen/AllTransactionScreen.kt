@@ -65,7 +65,6 @@ fun AllTransactionScreen(
     var selectedDate by remember { mutableStateOf<Long?>(null) }
     var selectedTransactionForDetail by remember { mutableStateOf<Transaction?>(null) }
     var showDetailSheet by remember { mutableStateOf(false) }
-    var showConfirmDialog by remember { mutableStateOf(false) }
 
     // --- Dynamic Categories Logic using Enum ---
     val currentCategories = remember(selectedTab) {
@@ -108,20 +107,26 @@ fun AllTransactionScreen(
             }
         }
 
-    val totalIncome = filteredTransactions
-        .filter { TransactionType.fromDbKey(it.transactionType) == TransactionType.INCOME }
-        .sumOf { it.amount }
+    val totalIncome = remember(filteredTransactions) {
+        filteredTransactions
+            .filter { TransactionType.fromDbKey(it.transactionType) == TransactionType.INCOME }
+            .sumOf { it.amount }
+    }
 
-    val totalExpense = filteredTransactions
-        .filter { TransactionType.fromDbKey(it.transactionType) == TransactionType.EXPENSE }
-        .sumOf { it.amount }
+    val totalExpense = remember(filteredTransactions) {
+        filteredTransactions
+            .filter { TransactionType.fromDbKey(it.transactionType) == TransactionType.EXPENSE }
+            .sumOf { it.amount }
+    }
 
     val balance = totalIncome - totalExpense
 
-    val incomeProgress = if (totalIncome + totalExpense > 0) {
-        (totalIncome / (totalIncome + totalExpense)).toFloat()
-    } else {
-        0.5f
+    val incomeProgress = remember(totalIncome, totalExpense) {
+        if (totalIncome + totalExpense > 0) {
+            (totalIncome / (totalIncome + totalExpense)).toFloat()
+        } else {
+            0.5f
+        }
     }
 
     if (showDetailSheet && selectedTransactionForDetail != null) {
@@ -216,7 +221,7 @@ fun AllTransactionScreen(
                 contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                items(currentCategories) { categoryKey ->
+                items(currentCategories, key = { it }) { categoryKey ->
                     // Get localized name for the UI chip
                     val labelText = if (categoryKey == "All") {
                         stringResource(R.string.filter_all)

@@ -6,7 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.therishideveloper.dailyexpense.component.showToast
 import com.therishideveloper.dailyexpense.data.entity.Transaction
 import com.therishideveloper.dailyexpense.util.ExcelHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,36 +38,46 @@ class DownloadViewModel @Inject constructor() : ViewModel() {
             return
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             isDownloading = true
             errorMessage = null
-
-            val file = ExcelHelper.createTransactionExcel(context,transactions)
-
-            withContext(Dispatchers.Main) {
-                isDownloading = false
+            try {
+                val file = withContext(Dispatchers.IO) {
+                    ExcelHelper.createTransactionExcel(context, transactions)
+                }
                 if (file != null) {
                     downloadedFile = file
                     onComplete(file)
                 } else {
                     errorMessage = "Failed to create Excel file..."
                 }
+            } finally {
+                isDownloading = false
             }
         }
     }
 
     fun shareExcel(transactions: List<Transaction>, context: Context) {
         resetState()
-        viewModelScope.launch(Dispatchers.IO) {
+        if (transactions.isEmpty()) {
+            errorMessage = "No transactions found to share!"
+            return
+        }
+
+        viewModelScope.launch {
             isDownloading = true
-            val file = ExcelHelper.createTransactionExcel(context,transactions)
-            withContext(Dispatchers.Main) {
-                isDownloading = false
+            errorMessage = null
+            try {
+                val file = withContext(Dispatchers.IO) {
+                    ExcelHelper.createTransactionExcel(context, transactions)
+                }
                 if (file != null) {
                     ExcelHelper.shareExcelFile(context, file)
                 } else {
                     errorMessage = "Failed to create file for sharing..."
                 }
+            } finally {
+                isDownloading = false
             }
         }
     }

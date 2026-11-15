@@ -35,11 +35,13 @@ object DateUtils {
         cal.set(Calendar.HOUR_OF_DAY, 0)
         cal.set(Calendar.MINUTE, 0)
         cal.set(Calendar.SECOND, 0)
+        cal.set(Calendar.MILLISECOND, 0)
         val start = cal.timeInMillis
 
         cal.set(Calendar.HOUR_OF_DAY, 23)
         cal.set(Calendar.MINUTE, 59)
         cal.set(Calendar.SECOND, 59)
+        cal.set(Calendar.MILLISECOND, 999)
         val end = cal.timeInMillis
 
         return Pair(start, end)
@@ -102,8 +104,11 @@ object DateUtils {
     }
 
     fun getLocalizedMonthName(context: Context, monthIndex: Int, isShort: Boolean = true): String {
-        val calendar = Calendar.getInstance()
-        calendar.set(Calendar.MONTH, monthIndex)
+        val safeMonth = monthIndex.coerceIn(0, 11)
+        val calendar = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+            set(Calendar.MONTH, safeMonth)
+        }
         val pattern = if (isShort) "MMM" else "MMMM"
         val locale = LocaleHelper.getCurrentLocale(context)
         val sdf = SimpleDateFormat(pattern, locale)
@@ -111,7 +116,7 @@ object DateUtils {
     }
 
     fun getLocalizedMonthYear(context: Context, month: Int, year: Int): String {
-        val monthName = getLocalizedMonthName(context, month - 1, isShort = false)
+        val monthName = getLocalizedMonthName(context, (month - 1).coerceIn(0, 11), isShort = false)
         val formattedYear = NumberUtils.formatByLocale(context, year.toString())
         return "$monthName $formattedYear"
     }

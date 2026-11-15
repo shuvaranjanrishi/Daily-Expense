@@ -2,8 +2,8 @@ package com.therishideveloper.dailyexpense.screen
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -577,7 +577,7 @@ private fun DeveloperAppCard(
 
 private fun openUrl(context: Context, url: String) {
     try {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         context.startActivity(intent)
     } catch (_: Exception) {
         // Ignore if no browser or Play Store handler is present
@@ -587,7 +587,7 @@ private fun openUrl(context: Context, url: String) {
 private fun openEmail(context: Context, email: String) {
     try {
         val intent = Intent(Intent.ACTION_SENDTO).apply {
-            data = Uri.parse("mailto:$email")
+            data = "mailto:$email".toUri()
             putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
         }
         context.startActivity(intent)

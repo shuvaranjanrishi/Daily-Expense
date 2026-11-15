@@ -2,7 +2,6 @@ package com.therishideveloper.dailyexpense.screen
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.navigation.NavHostController
 import com.therishideveloper.dailyexpense.viewmodel.TransactionViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

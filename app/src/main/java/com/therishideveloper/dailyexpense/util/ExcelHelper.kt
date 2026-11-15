@@ -1,13 +1,17 @@
 package com.therishideveloper.dailyexpense.util
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Environment
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.therishideveloper.dailyexpense.R
 import com.therishideveloper.dailyexpense.data.entity.Transaction
@@ -57,41 +61,20 @@ object ExcelHelper {
             .setAutoCancel(true)
             .build()
 
-        manager.notify(System.currentTimeMillis().toInt(), notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+
+        try {
+            manager.notify(System.currentTimeMillis().toInt(), notification)
+        } catch (_: SecurityException) {
+            // Notification permission revoked
+        }
     }
 
     fun createTransactionExcel(context: Context, transactions: List<Transaction>): File? {
-        val workbook = XSSFWorkbook()
-        val sheet = workbook.createSheet(context.getString(R.string.excel_sheet_name))
-
-        val headerRow = sheet.createRow(0)
-        val headers = listOf(
-            context.getString(R.string.excel_col_date),
-            context.getString(R.string.excel_col_category),
-            context.getString(R.string.excel_col_description),
-            context.getString(R.string.excel_col_amount),
-            context.getString(R.string.excel_col_type)
-        )
-        headers.forEachIndexed { index, title ->
-            headerRow.createCell(index).setCellValue(title)
-        }
-
-        transactions.forEachIndexed { index, tx ->
-            val row = sheet.createRow(index + 1)
-            val category = Category.fromDbKey(tx.category)
-            val categoryLabel = context.getString(category.titleRes)
-            val type = TransactionType.fromDbKey(tx.transactionType)
-            val typeLabel = context.getString(type.titleRes)
-            val amount = NumberUtils.formatByLocale(context, tx.amount.toString())
-            row.createCell(0).setCellValue(DateUtils.formatToDisplay(context, tx.date))
-            row.createCell(1).setCellValue(categoryLabel)
-            row.createCell(2).setCellValue(tx.description)
-            row.createCell(3).setCellValue(amount)
-            row.createCell(4).setCellValue(typeLabel)
-        }
-
-        sheet.setColumnWidth(2, 30 * 256)
-
         return try {
             val downloadDir =
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
@@ -100,13 +83,43 @@ object ExcelHelper {
 
             val timeStamp = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
             val baseFileName = "Transaction_Report_$timeStamp"
-
             val file = getUniqueFile(root, baseFileName, "xlsx")
 
-            val out = FileOutputStream(file)
-            workbook.write(out)
-            out.close()
-            workbook.close()
+            XSSFWorkbook().use { workbook ->
+                val sheet = workbook.createSheet(context.getString(R.string.excel_sheet_name))
+
+                val headerRow = sheet.createRow(0)
+                val headers = listOf(
+                    context.getString(R.string.excel_col_date),
+                    context.getString(R.string.excel_col_category),
+                    context.getString(R.string.excel_col_description),
+                    context.getString(R.string.excel_col_amount),
+                    context.getString(R.string.excel_col_type)
+                )
+                headers.forEachIndexed { index, title ->
+                    headerRow.createCell(index).setCellValue(title)
+                }
+
+                transactions.forEachIndexed { index, tx ->
+                    val row = sheet.createRow(index + 1)
+                    val category = Category.fromDbKey(tx.category)
+                    val categoryLabel = context.getString(category.titleRes)
+                    val type = TransactionType.fromDbKey(tx.transactionType)
+                    val typeLabel = context.getString(type.titleRes)
+                    val amount = NumberUtils.formatByLocale(context, tx.amount.toString())
+                    row.createCell(0).setCellValue(DateUtils.formatToDisplay(context, tx.date))
+                    row.createCell(1).setCellValue(categoryLabel)
+                    row.createCell(2).setCellValue(tx.description)
+                    row.createCell(3).setCellValue(amount)
+                    row.createCell(4).setCellValue(typeLabel)
+                }
+
+                sheet.setColumnWidth(2, 30 * 256)
+
+                FileOutputStream(file).use { out ->
+                    workbook.write(out)
+                }
+            }
             file
         } catch (e: Exception) {
             e.printStackTrace()
@@ -140,8 +153,12 @@ object ExcelHelper {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
-        context.startActivity(
-            Intent.createChooser(intent, context.getString(R.string.excel_share_chooser))
-        )
+        try {
+            context.startActivity(
+                Intent.createChooser(intent, context.getString(R.string.excel_share_chooser))
+            )
+        } catch (_: ActivityNotFoundException) {
+            // No share target available
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.therishideveloper.dailyexpense.util
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import com.therishideveloper.dailyexpense.R
@@ -7,7 +8,7 @@ import com.therishideveloper.dailyexpense.R
 fun shareApp(context: Context) {
     val appPackageName = context.packageName
     val shareMessage = context.getString(R.string.share_text) +
-            "https://play.google.com/store/apps/details?id=$appPackageName"
+        "https://play.google.com/store/apps/details?id=$appPackageName"
 
     val sendIntent = Intent().apply {
         action = Intent.ACTION_SEND
@@ -16,5 +17,9 @@ fun shareApp(context: Context) {
     }
 
     val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.menu_share))
-    context.startActivity(shareIntent)
+    try {
+        context.startActivity(shareIntent)
+    } catch (_: ActivityNotFoundException) {
+        // No share handler installed
+    }
 }

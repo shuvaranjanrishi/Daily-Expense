@@ -40,12 +40,13 @@ class BackupHelper(private val context: Context) {
 
     fun restoreBackup(uri: Uri): AppBackupData? {
         return try {
-            val inputStream = context.contentResolver.openInputStream(uri)
-            val reader = inputStream?.bufferedReader()
-            val jsonData = reader?.readText()
+            val jsonData = context.contentResolver.openInputStream(uri)?.bufferedReader()?.use {
+                it.readText()
+            } ?: return null
             val type = object : TypeToken<AppBackupData>() {}.type
             Gson().fromJson(jsonData, type)
         } catch (e: Exception) {
+            e.printStackTrace()
             null
         }
     }

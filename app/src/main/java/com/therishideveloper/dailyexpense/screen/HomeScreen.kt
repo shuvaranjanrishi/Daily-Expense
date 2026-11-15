@@ -61,11 +61,12 @@ fun HomeScreen(
     val expenseList by viewModel.allExpenseTransactions.collectAsStateWithLifecycle()
 
     // --- Calculation Logic ---
-    val totalIncome = incomeList.sumOf { it.amount }
-    val totalExpense = expenseList.sumOf { it.amount }
+    val totalIncome = remember(incomeList) { incomeList.sumOf { it.amount } }
+    val totalExpense = remember(expenseList) { expenseList.sumOf { it.amount } }
     val balance = totalIncome - totalExpense
-    val incomeProgress =
+    val incomeProgress = remember(totalIncome, totalExpense) {
         if (totalIncome + totalExpense > 0) (totalIncome / (totalIncome + totalExpense)).toFloat() else 0.5f
+    }
 
     Scaffold(
         topBar = {
@@ -119,8 +120,8 @@ fun HomeScreen(
             }
             val pieSize = if (isNarrow) 82.dp else 100.dp
             val horizontalPad = if (isNarrow) 12.dp else 16.dp
-            val dashboardMenus = DashboardUtils.getDashboardMenus()
-            val menuRows = dashboardMenus.chunked(columns)
+            val dashboardMenus = remember { DashboardUtils.getDashboardMenus() }
+            val menuRows = remember(dashboardMenus, columns) { dashboardMenus.chunked(columns) }
 
             Column(
                 modifier = Modifier
