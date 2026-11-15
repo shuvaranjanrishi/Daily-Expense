@@ -102,4 +102,5 @@ dependencies {
     implementation(libs.hilt.navigation.compose)
     implementation(libs.apache.poi)
     implementation(libs.google.code.gson)
+    implementation(libs.coil.compose)
 }

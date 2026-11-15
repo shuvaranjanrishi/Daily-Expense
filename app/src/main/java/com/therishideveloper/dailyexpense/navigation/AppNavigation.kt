@@ -20,6 +20,7 @@ import com.therishideveloper.dailyexpense.screen.AllTransactionScreen
 import com.therishideveloper.dailyexpense.screen.LanguageScreen
 import com.therishideveloper.dailyexpense.screen.BackupScreen
 import com.therishideveloper.dailyexpense.screen.CategoryChartScreen
+import com.therishideveloper.dailyexpense.screen.DeveloperScreen
 import com.therishideveloper.dailyexpense.screen.HomeScreen
 import com.therishideveloper.dailyexpense.screen.TransactionListScreen
 import com.therishideveloper.dailyexpense.screen.NoteScreen
@@ -147,6 +148,11 @@ fun AppNavigation(navController: NavHostController, onOpenDrawer: () -> Unit) {
         }
         composable(Screens.AboutScreen.route) {
             AboutScreen(
+                onMenuClick = onOpenDrawer,
+            )
+        }
+        composable(Screens.DeveloperScreen.route) {
+            DeveloperScreen(
                 onMenuClick = onOpenDrawer,
             )
         }

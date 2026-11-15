@@ -125,7 +125,10 @@ class MainActivity : ComponentActivity() {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
         val isHome =
-            currentRoute == Screens.HomeScreen.route || currentRoute == Screens.BackupScreen.route || currentRoute == Screens.AboutScreen.route
+            currentRoute == Screens.HomeScreen.route ||
+                currentRoute == Screens.BackupScreen.route ||
+                currentRoute == Screens.AboutScreen.route ||
+                currentRoute == Screens.DeveloperScreen.route
 
         var showLanguageDialog by remember { mutableStateOf(false) }
         val context = LocalContext.current
@@ -177,9 +180,13 @@ class MainActivity : ComponentActivity() {
                                         label = {
                                             val labelText = when (navigationItem.title) {
                                                 "Home" -> stringResource(R.string.menu_home)
+                                                "All Transactions" -> stringResource(R.string.menu_all_transactions)
+                                                "Category Chart" -> stringResource(R.string.menu_category_chart)
+                                                "Keep Note" -> stringResource(R.string.menu_note)
                                                 "Backup" -> stringResource(R.string.menu_backup)
                                                 "Share App" -> stringResource(R.string.menu_share)
                                                 "About" -> stringResource(R.string.menu_about)
+                                                "Developer" -> stringResource(R.string.menu_developer)
                                                 else -> navigationItem.title
                                             }
                                             Text(text = labelText)

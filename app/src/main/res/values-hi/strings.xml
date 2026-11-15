@@ -158,7 +158,8 @@
     <string name="label_target_100">लक्ष्य 100%</string>
 
     <!--About Screen-->
-    <string name="menu_about">ऐप के बारे में</string>
+    <string name="menu_about">ऐप परिचय</string>
+    <string name="menu_developer">डेवलपर परिचय</string>
     <string name="about_slogan">सही हिसाब, बेहतर बचत।</string>
     <string name="about_description">डेली एक्सपेंस आपको अपने पैसे को आसानी से प्रबंधित करने में मदद करता है। शक्तिशाली चार्ट और रिपोर्ट के साथ आय, व्यय को ट्रैक करें।</string>
     <string name="feature_1">✔ विस्तृत आय/व्यय ट्रैकिंग</string>
@@ -170,10 +171,29 @@
 
     <string name="powered_by">Powered By The Rishi Developer</string>
     <string name="label_app_version">ऐप संस्करण: </string>
+    <string name="label_version_short">v%1$s</string>
     <string name="label_developer">डेवलपर</string>
     <string name="dev_name">शुभ रंजन ऋषि</string>
     <string name="dev_brand">द ऋषि डेवलपर</string>
     <string name="dev_email">therishideveloper95@gmail.com</string>
+    <string name="dev_tagline">नवोन्मेषी एंड्रॉइड ऐप समाधान</string>
+    <string name="label_more_apps">अन्य ऐप्स</string>
+    <string name="label_contact_support">संपर्क और सहायता</string>
+    <string name="label_mission_vision">मिशन और विज़न</string>
+    <string name="app_children_name_title">सनातनी शिशुओं के सुंदर नाम</string>
+    <string name="app_children_name_desc">अर्थ और राशि के साथ हिंदू बच्चों के सार्थक नामों का संग्रह।</string>
+    <string name="app_daily_expense_desc">चार्ट और रिपोर्ट के साथ सरल ऑफ़लाइन आय, व्यय और बजट ट्रैकर।</string>
+    <string name="app_dream_house_title">Dream House</string>
+    <string name="app_dream_house_desc">घर निर्माण का बजट, सामग्री, लागत और प्रगति ट्रैक करें।</string>
+    <string name="label_email">ईमेल</string>
+    <string name="label_address">पता</string>
+    <string name="dev_address">हबीबगंज, सिलहट, बांग्लादेश</string>
+    <string name="dev_mission">हमारा मिशन सरल, विश्वसनीय और ऑफ़लाइन-अनुकूल एंड्रॉइड ऐप बनाना है जो गोपनीयता के साथ दैनिक कार्यों को आसान बनाएं।</string>
+    <string name="dev_copyright">© 2026 द ऋषि डेवलपर। सर्वाधिकार सुरक्षित।</string>
+    <string name="action_play_store">प्ले स्टोर</string>
+    <string name="action_email">ईमेल</string>
+    <string name="action_share">साझा करें</string>
+    <string name="msg_no_email_app">इस डिवाइस पर कोई ईमेल ऐप नहीं मिला।</string>
     <string name="label_main_menu">मुख्य मेनू</string>
     <string name="label_settings">सेटिंग्स और टूल्स</string>
     <string name="label_more">सहायता और परिचय</string>

@@ -21,8 +21,10 @@ firebaseCrashlyticsBuildtools = "3.0.6"
 gson = "2.10.1"
 material3 = "1.4.0"
 appcompat = "1.7.1"
+coil = "2.7.0"
 
 [libraries]
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 google-code-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 google-gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 apache-poi = { group = "org.apache.poi", name = "poi-ooxml", version.ref = "poi" }

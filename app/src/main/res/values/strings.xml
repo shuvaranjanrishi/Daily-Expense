@@ -158,7 +158,8 @@
     <string name="label_target_100">Target 100%</string>
 
     <!--About Screen-->
-    <string name="menu_about">About App</string>
+    <string name="menu_about">App Info</string>
+    <string name="menu_developer">Developer Info</string>
     <string name="about_slogan">Smart Tracking, Better Savings.</string>
     <string name="about_description">Daily Expense helps you manage your money easily. Track income, expenses, and analyze your financial habits with powerful charts and reports.</string>
     <string name="feature_1">✔ Detailed Income/Expense Tracking</string>
@@ -170,10 +171,29 @@
 
     <string name="powered_by">Powered By The Rishi Developer</string>
     <string name="label_app_version">App Version: </string>
+    <string name="label_version_short">v%1$s</string>
     <string name="label_developer">Developed by</string>
     <string name="dev_name">Shuva Ranjan Rishi</string>
     <string name="dev_brand">The Rishi Developer</string>
     <string name="dev_email">therishideveloper95@gmail.com</string>
+    <string name="dev_tagline">Innovative Android App Solutions</string>
+    <string name="label_more_apps">More Apps</string>
+    <string name="label_contact_support">Contact &amp; Support</string>
+    <string name="label_mission_vision">Mission &amp; Vision</string>
+    <string name="app_children_name_title">Sanatani Shishuder Sundor Nam</string>
+    <string name="app_children_name_desc">Collection of meaningful Hindu baby names with Rashi &amp; search.</string>
+    <string name="app_daily_expense_desc">Smart offline income, expense &amp; budget tracker with charts.</string>
+    <string name="app_dream_house_title">Dream House</string>
+    <string name="app_dream_house_desc">Plan construction budget, materials, costs &amp; home progress.</string>
+    <string name="label_email">Email</string>
+    <string name="label_address">Address</string>
+    <string name="dev_address">Habiganj, Sylhet, Bangladesh</string>
+    <string name="dev_mission">Our mission is to build simple, reliable, and offline-friendly Android apps that solve everyday problems with clarity and privacy.</string>
+    <string name="dev_copyright">© 2026 The Rishi Developer. All rights reserved.</string>
+    <string name="action_play_store">Play Store</string>
+    <string name="action_email">Email</string>
+    <string name="action_share">Share</string>
+    <string name="msg_no_email_app">No email app found on this device.</string>
     <string name="label_main_menu">Main Menu</string>
     <string name="label_settings">Settings &amp; Tools</string>
     <string name="label_more">Support &amp; About</string>

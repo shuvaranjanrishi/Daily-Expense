@@ -158,7 +158,8 @@
     <string name="label_target_100">লক্ষ্য ১০০%</string>
 
     <!--About Screen-->
-    <string name="menu_about">অ্যাপ সম্পর্কে</string>
+    <string name="menu_about">অ্যাপ পরিচিতি</string>
+    <string name="menu_developer">ডেভেলপার পরিচিতি</string>
     <string name="about_slogan">সঠিক হিসাব, সুন্দর ভবিষ্যৎ।</string>
     <string name="about_description">ডেইলই এক্সপেন্স আপনার অর্থ ব্যবস্থাপনাকে সহজ করে তোলে। শক্তিশালী চার্ট এবং রিপোর্টের মাধ্যমে আপনার আয়-ব্যয় ট্র্যাক করুন এবং অর্থনৈতিক অভ্যাস বিশ্লেষণ করুন।</string>
     <string name="feature_1">✔ আয় ও ব্যয়ের বিস্তারিত ট্র্যাকিং</string>
@@ -170,10 +171,29 @@
 
     <string name="powered_by">Powered By The Rishi Developer</string>
     <string name="label_app_version">অ্যাপ ভার্সন: </string>
+    <string name="label_version_short">ভার্সন %1$s</string>
     <string name="label_developer">ডেভেলপার</string>
     <string name="dev_name">শুভ রঞ্জন ঋষি</string>
     <string name="dev_brand">দ্য ঋষি ডেভেলপার</string>
     <string name="dev_email">therishideveloper95@gmail.com</string>
+    <string name="dev_tagline">উদ্ভাবনী অ্যান্ড্রয়েড অ্যাপ সমাধান</string>
+    <string name="label_more_apps">অন্যান্য অ্যাপস</string>
+    <string name="label_contact_support">যোগাযোগ ও সাপোর্ট</string>
+    <string name="label_mission_vision">মিশন ও দর্শন</string>
+    <string name="app_children_name_title">সনাতনী শিশুদের সুন্দর নাম</string>
+    <string name="app_children_name_desc">অর্থ ও রাশিসহ সনাতনী শিশুদের সুন্দর ও অর্থবহ নামের সংগ্রহ।</string>
+    <string name="app_daily_expense_desc">চার্ট ও রিপোর্টসহ সহজ অফলাইন আয়-ব্যয় ও বাজেট হিসাব অ্যাপ।</string>
+    <string name="app_dream_house_title">Dream House</string>
+    <string name="app_dream_house_desc">বাড়ি নির্মাণের বাজেট, উপকরণ, খরচ ও কাজের অগ্রগতির হিসাব রাখুন।</string>
+    <string name="label_email">ইমেইল</string>
+    <string name="label_address">ঠিকানা</string>
+    <string name="dev_address">হবিগঞ্জ, সিলেট, বাংলাদেশ</string>
+    <string name="dev_mission">আমাদের লক্ষ্য হলো মানুষের দৈনন্দিন জীবনের হিসাব-নিকাশ ও প্রয়োজনকে সহজ করতে নিরাপদ, দ্রুত এবং সম্পূর্ণ অফলাইন-বান্ধব অ্যান্ড্রয়েড অ্যাপ তৈরি করা।</string>
+    <string name="dev_copyright">© ২০২৬ দ্য ঋষি ডেভেলপার। সর্বস্বত্ব সংরক্ষিত।</string>
+    <string name="action_play_store">প্লে স্টোর</string>
+    <string name="action_email">ইমেইল</string>
+    <string name="action_share">শেয়ার</string>
+    <string name="msg_no_email_app">এই ডিভাইসে কোনো ইমেইল অ্যাপ পাওয়া যায়নি।</string>
     <string name="label_main_menu">প্রধান মেনু</string>
     <string name="label_settings">সেটিংস ও টুলস</string>
     <string name="label_more">সাপোর্ট ও পরিচিতি</string>
