@@ -144,6 +144,7 @@
     <string name="title_all_transactions">সব লেনদেন</string>
     <string name="btn_close">বন্ধ করুন</string>
     <string name="btn_minimize">ছোট করুন</string>
+    <string name="desc_resize_calculator">ক্যালকুলেটর ছোট-বড় করুন</string>
 
     <string name="title_category_analytics">ক্যাটেগরি ভিত্তিক বিশ্লেষণ</string>
     <string name="tab_income">আয়</string>

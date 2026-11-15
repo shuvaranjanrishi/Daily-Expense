@@ -144,6 +144,7 @@
     <string name="title_all_transactions">सभी लेनदेन</string>
     <string name="btn_close">बंद करें</string>
     <string name="btn_minimize">छोटा करें</string>
+    <string name="desc_resize_calculator">कैलकुलेटर का आकार बदलें</string>
 
     <string name="title_category_analytics">कैटेगरी विश्लेषण</string>
     <string name="tab_income">आय</string>

@@ -144,6 +144,7 @@
     <string name="title_all_transactions">All Transactions</string>
     <string name="btn_close">Close</string>
     <string name="btn_minimize">Minimize</string>
+    <string name="desc_resize_calculator">Resize calculator</string>
 
     <string name="title_category_analytics">Category Analytics</string>
     <string name="tab_income">Income</string>
