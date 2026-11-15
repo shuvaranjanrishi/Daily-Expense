@@ -27,6 +27,8 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.R
@@ -60,7 +62,14 @@ fun BackupScreen(onMenuClick: () -> Unit, viewModel: TransactionViewModel) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.backup_top_title), color = Color.White) },
+                title = {
+                    Text(
+                        stringResource(R.string.backup_top_title),
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onMenuClick) {
                         Icon(Icons.Default.Menu, "Menu", tint = Color.White)
@@ -70,14 +79,19 @@ fun BackupScreen(onMenuClick: () -> Unit, viewModel: TransactionViewModel) {
             )
         }
     ) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            contentAlignment = Alignment.TopCenter
+        ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
+                    .widthIn(max = 640.dp)
+                    .fillMaxHeight()
                     .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 20.dp), // Fixed overall horizontal padding
+                    .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
@@ -101,12 +115,14 @@ fun BackupScreen(onMenuClick: () -> Unit, viewModel: TransactionViewModel) {
                     fontSize = 20.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.padding(top = 12.dp)
                 )
                 Text(
                     text = stringResource(R.string.backup_subtitle),
                     fontSize = 13.sp,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                     modifier = Modifier.padding(bottom = 28.dp)
                 )
 

@@ -8,12 +8,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.DrawerValue
@@ -41,6 +44,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.therishideveloper.dailyexpense.component.DrawerFooter
@@ -82,7 +86,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val systemDark = isSystemInDarkTheme()
-            var isDarkTheme by remember {
+            var isDarkTheme by rememberSaveable {
                 mutableStateOf(ThemeHelper.isDarkMode(this@MainActivity, systemDark))
             }
 
@@ -134,129 +138,142 @@ class MainActivity : ComponentActivity() {
         val context = LocalContext.current
         val currentLang = remember(context) { LocaleHelper.getSavedLocale(context) }
 
-        ModalNavigationDrawer(
-            gesturesEnabled = isHome,
-            drawerContent = {
-                ModalDrawerSheet(
-                    windowInsets = WindowInsets(0, 0, 0, 0),
-                    drawerContainerColor = MaterialTheme.colorScheme.surface
-                ) {
-                    Column(
-                        modifier = Modifier.fillMaxHeight()
+        BackHandler(enabled = drawerState.isOpen) {
+            scope.launch { drawerState.close() }
+        }
+
+        BoxWithConstraints {
+            val drawerWidth = minOf(304.dp, maxWidth * 0.80f)
+
+            ModalNavigationDrawer(
+                gesturesEnabled = isHome || drawerState.isOpen,
+                drawerContent = {
+                    ModalDrawerSheet(
+                        modifier = Modifier.width(drawerWidth),
+                        windowInsets = WindowInsets(0, 0, 0, 0),
+                        drawerContainerColor = MaterialTheme.colorScheme.surface
                     ) {
-                        DrawerHeader()
-
                         Column(
-                            modifier = Modifier
-                                .weight(1f)
-                                .fillMaxWidth()
-                                .verticalScroll(rememberScrollState())
+                            modifier = Modifier.fillMaxHeight()
                         ) {
-                            val groupedItems = listOfNavItems.groupBy { it.section }
+                            DrawerHeader()
 
-                            groupedItems.forEach { (section, items) ->
-                                val sectionLabel = when (section) {
-                                    "Main" -> stringResource(R.string.label_main_menu)
-                                    "Settings" -> stringResource(R.string.label_settings)
-                                    "More" -> stringResource(R.string.label_more)
-                                    else -> section
-                                }
+                            Column(
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxWidth()
+                                    .verticalScroll(rememberScrollState())
+                            ) {
+                                val groupedItems = listOfNavItems.groupBy { it.section }
 
-                                Text(
-                                    text = sectionLabel,
-                                    style = MaterialTheme.typography.labelLarge,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.padding(
-                                        start = 28.dp,
-                                        top = 20.dp,
-                                        bottom = 8.dp
+                                groupedItems.forEach { (section, items) ->
+                                    val sectionLabel = when (section) {
+                                        "Main" -> stringResource(R.string.label_main_menu)
+                                        "Settings" -> stringResource(R.string.label_settings)
+                                        "More" -> stringResource(R.string.label_more)
+                                        else -> section
+                                    }
+
+                                    Text(
+                                        text = sectionLabel,
+                                        style = MaterialTheme.typography.labelLarge,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(
+                                            start = 24.dp,
+                                            top = 18.dp,
+                                            bottom = 8.dp
+                                        )
                                     )
-                                )
 
-                                items.forEach { navigationItem ->
-                                    val isSelected = currentRoute == navigationItem.route
-                                    NavigationDrawerItem(
-                                        label = {
-                                            val labelText = when (navigationItem.title) {
-                                                "Home" -> stringResource(R.string.menu_home)
-                                                "All Transactions" -> stringResource(R.string.menu_all_transactions)
-                                                "Category Chart" -> stringResource(R.string.menu_category_chart)
-                                                "Keep Note" -> stringResource(R.string.menu_note)
-                                                "Backup" -> stringResource(R.string.menu_backup)
-                                                "Share App" -> stringResource(R.string.menu_share)
-                                                "About" -> stringResource(R.string.menu_about)
-                                                "Developer" -> stringResource(R.string.menu_developer)
-                                                else -> navigationItem.title
-                                            }
-                                            Text(text = labelText)
-                                        },
-                                        selected = isSelected,
-                                        onClick = {
-                                            scope.launch {
-                                                drawerState.close()
-
-                                                when (navigationItem.route) {
-                                                    Screens.ShareAppScreen.route -> {
-                                                        shareApp(context)
-                                                    }
-
-                                                    else -> {
-                                                        navController.navigate(navigationItem.route) {
-                                                            popUpTo(navController.graph.startDestinationId) {
-                                                                saveState = true
+                                    items.forEach { navigationItem ->
+                                        val isSelected = currentRoute == navigationItem.route
+                                        NavigationDrawerItem(
+                                            label = {
+                                                val labelText = when (navigationItem.title) {
+                                                    "Home" -> stringResource(R.string.menu_home)
+                                                    "All Transactions" -> stringResource(R.string.menu_all_transactions)
+                                                    "Category Chart" -> stringResource(R.string.menu_category_chart)
+                                                    "Keep Note" -> stringResource(R.string.menu_note)
+                                                    "Backup" -> stringResource(R.string.menu_backup)
+                                                    "Share App" -> stringResource(R.string.menu_share)
+                                                    "About" -> stringResource(R.string.menu_about)
+                                                    "Developer" -> stringResource(R.string.menu_developer)
+                                                    else -> navigationItem.title
+                                                }
+                                                Text(text = labelText)
+                                            },
+                                            selected = isSelected,
+                                            onClick = {
+                                                scope.launch {
+                                                    try {
+                                                        drawerState.close()
+                                                    } finally {
+                                                        when (navigationItem.route) {
+                                                            Screens.ShareAppScreen.route -> {
+                                                                shareApp(context)
                                                             }
-                                                            launchSingleTop = true
-                                                            restoreState = true
+
+                                                            currentRoute -> Unit
+
+                                                            else -> {
+                                                                navController.navigate(navigationItem.route) {
+                                                                    popUpTo(navController.graph.findStartDestination().id) {
+                                                                        saveState = true
+                                                                    }
+                                                                    launchSingleTop = true
+                                                                    restoreState = true
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                 }
-                                            }
-                                        },
-                                        icon = {
-                                            Icon(
-                                                imageVector = if (isSelected) navigationItem.selectedIcon else navigationItem.unselectedIcon,
-                                                contentDescription = null
-                                            )
-                                        },
-                                        modifier = Modifier
-                                            .padding(NavigationDrawerItemDefaults.ItemPadding)
-                                            .fillMaxWidth()
-                                    )
-                                }
+                                            },
+                                            icon = {
+                                                Icon(
+                                                    imageVector = if (isSelected) navigationItem.selectedIcon else navigationItem.unselectedIcon,
+                                                    contentDescription = null
+                                                )
+                                            },
+                                            modifier = Modifier
+                                                .padding(NavigationDrawerItemDefaults.ItemPadding)
+                                                .fillMaxWidth()
+                                        )
+                                    }
 
-                                if (section != groupedItems.keys.last()) {
-                                    HorizontalDivider(
-                                        modifier = Modifier
-                                            .padding(
-                                                vertical = 12.dp,
-                                                horizontal = 28.dp
-                                            )
-                                            .fillMaxWidth(),
-                                        thickness = 0.5.dp,
-                                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
-                                    )
+                                    if (section != groupedItems.keys.last()) {
+                                        HorizontalDivider(
+                                            modifier = Modifier
+                                                .padding(
+                                                    vertical = 10.dp,
+                                                    horizontal = 24.dp
+                                                )
+                                                .fillMaxWidth(),
+                                            thickness = 0.5.dp,
+                                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
+                                        )
+                                    }
                                 }
                             }
-                        }
 
-                        DrawerFooter(
-                            currentLanguageCode = currentLang,
-                            isDarkTheme = isDarkTheme,
-                            onLanguageClick = {
-                                scope.launch { drawerState.close() }
-                                showLanguageDialog = true
-                            },
-                            onThemeToggle = onToggleTheme
-                        )
+                            DrawerFooter(
+                                currentLanguageCode = currentLang,
+                                isDarkTheme = isDarkTheme,
+                                onLanguageClick = {
+                                    scope.launch { drawerState.close() }
+                                    showLanguageDialog = true
+                                },
+                                onThemeToggle = onToggleTheme
+                            )
+                        }
                     }
-                }
-            },
-            drawerState = drawerState
-        ) {
-            AppNavigation(navController, onOpenDrawer = {
-                scope.launch { drawerState.open() }
-            })
+                },
+                drawerState = drawerState
+            ) {
+                AppNavigation(navController, onOpenDrawer = {
+                    scope.launch { drawerState.open() }
+                })
+            }
         }
 
         if (showLanguageDialog) {

@@ -12,6 +12,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
@@ -24,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -181,7 +184,14 @@ fun TransactionListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(DateUtils.getScreenTitle(transactionPeriod), color = Color.White) },
+                title = {
+                    Text(
+                        DateUtils.getScreenTitle(transactionPeriod),
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = tealColor),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -208,33 +218,45 @@ fun TransactionListScreen(
             }
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-            DateFilterHeader(
-                text = displayText,
-                onClick = {
-                    if (transactionPeriod == TransactionPeriod.TODAY.dbKey) {
-                        DateUtils.showDatePicker(context, date) {
-                            date = it
-                        }
-                    } else showMonthYearPicker = true
-                }
-            )
-
-            TransactionSummaryCard(totalIncome, totalExpense, balance, incomeProgress)
-
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 680.dp)
             ) {
-                items(transactions, key = { it.id }) { item ->
-                    TransactionItem(transaction = item)
+                DateFilterHeader(
+                    text = displayText,
+                    onClick = {
+                        if (transactionPeriod == TransactionPeriod.TODAY.dbKey) {
+                            DateUtils.showDatePicker(context, date) {
+                                date = it
+                            }
+                        } else showMonthYearPicker = true
+                    }
+                )
+
+                TransactionSummaryCard(totalIncome, totalExpense, balance, incomeProgress)
+
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 8.dp,
+                        bottom = 88.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    items(transactions, key = { it.id }) { item ->
+                        TransactionItem(transaction = item)
+                    }
                 }
             }
         }
@@ -301,13 +323,17 @@ fun MonthYearPickerDialog(
             Text(stringResource(if (isMonthly) R.string.title_select_month_year else R.string.title_select_year))
         },
         text = {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+            ) {
                 Text(stringResource(R.string.label_year), fontWeight = FontWeight.Bold)
 
                 LazyRow(
                     state = listState,
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(horizontal = 16.dp) // সাইড প্যাডিং যাতে দেখতে ভালো লাগে
+                    contentPadding = PaddingValues(horizontal = 8.dp)
                 ) {
                     items(years) { year ->
                         FilterChip(
@@ -326,7 +352,6 @@ fun MonthYearPickerDialog(
                     Spacer(Modifier.height(16.dp))
                     Text(stringResource(R.string.label_month), fontWeight = FontWeight.Bold)
                     FlowRow(
-                        maxItemsInEachRow = 4,
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         (0..11).forEach { index ->

@@ -21,6 +21,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.NumberUtils
@@ -34,7 +36,14 @@ fun AboutScreen(onMenuClick: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.menu_about), color = Color.White) },
+                title = {
+                    Text(
+                        stringResource(R.string.menu_about),
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onMenuClick) {
                         Icon(
@@ -48,15 +57,22 @@ fun AboutScreen(onMenuClick: () -> Unit) {
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colorScheme.background),
-            horizontalAlignment = Alignment.CenterHorizontally
+            contentAlignment = Alignment.TopCenter
         ) {
-            Spacer(modifier = Modifier.height(30.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .widthIn(max = 640.dp)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Spacer(modifier = Modifier.height(30.dp))
 
             // 1. App Logo & Name
             Card(
@@ -79,13 +95,17 @@ fun AboutScreen(onMenuClick: () -> Unit) {
                 text = stringResource(R.string.app_name),
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
             Text(
                 text = stringResource(R.string.about_slogan),
                 fontSize = 14.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(horizontal = 16.dp)
             )
 
             // 2. Features Card
@@ -135,6 +155,7 @@ fun AboutScreen(onMenuClick: () -> Unit) {
                 fontWeight = FontWeight.Light
             )
             Spacer(modifier = Modifier.height(20.dp))
+            }
         }
     }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.R
@@ -49,16 +50,21 @@ fun AddNoteForm(
     val msgEmptyDesc = stringResource(R.string.msg_empty_desc)
     val msgSaveSuccess = stringResource(R.string.msg_note_saved)
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 20.dp)
-            .padding(bottom = 20.dp)
-            .navigationBarsPadding()
-            .imePadding()
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .widthIn(max = 560.dp)
+                .padding(horizontal = 20.dp)
+                .padding(bottom = 20.dp)
+                .navigationBarsPadding()
+                .imePadding()
+                .verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
         Text(
             text = stringResource(R.string.label_add_new_note),
             fontSize = 20.sp,
@@ -173,6 +179,7 @@ fun AddNoteForm(
                 fontWeight = FontWeight.Bold
             )
         }
+        }
     }
 }
 
@@ -191,8 +198,17 @@ fun NoteTypeButton(
         color = if (isSelected) activeColor else MaterialTheme.colorScheme.surfaceVariant,
         contentColor = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurfaceVariant
     ) {
-        Box(contentAlignment = Alignment.Center) {
-            Text(label, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+        Box(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = label,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
@@ -249,30 +265,36 @@ fun NoteItem(note: Note, onDelete: () -> Unit) {
                     note.description,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     DateUtils.formatToDisplay(context, note.date),
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
             Column(
                 horizontalAlignment = Alignment.End,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier.padding(start = 8.dp, end = 4.dp)
             ) {
                 Text(
                     text = NumberUtils.formatAmountByLocale(context, note.amount.toString()),
                     color = type.color,
                     fontWeight = FontWeight.ExtraBold,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    maxLines = 1
                 )
                 Text(
                     text = stringResource(type.titleRes).uppercase(),
                     fontSize = 9.sp,
                     fontWeight = FontWeight.Bold,
-                    color = type.color.copy(alpha = 0.75f)
+                    color = type.color.copy(alpha = 0.75f),
+                    maxLines = 1
                 )
             }
             IconButton(onClick = { showDeleteConfirm = true }) {

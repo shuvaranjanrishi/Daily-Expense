@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -42,8 +43,9 @@ fun DownloadLoaderDialog() {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(vertical = 32.dp, horizontal = 24.dp)
-                    .fillMaxWidth(0.85f),
+                    .fillMaxWidth()
+                    .widthIn(max = 360.dp)
+                    .padding(vertical = 32.dp, horizontal = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
@@ -60,7 +62,8 @@ fun DownloadLoaderDialog() {
                     text = stringResource(R.string.msg_generating_report), // Excel report generation text
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    textAlign = TextAlign.Center
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -117,7 +120,9 @@ fun TransactionItem(transaction: Transaction) {
                     text = transaction.description,
                     fontWeight = FontWeight.Bold,
                     fontSize = 16.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = stringResource(category.titleRes) + " • ${
@@ -127,9 +132,12 @@ fun TransactionItem(transaction: Transaction) {
                         )
                     }",
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = (if (isIncome) "+ " else "- ") + NumberUtils.formatAmountByLocale(
                     context,
@@ -137,7 +145,8 @@ fun TransactionItem(transaction: Transaction) {
                 ),
                 fontWeight = FontWeight.Bold,
                 color = if (isIncome) tealColor else expenseRed,
-                fontSize = 16.sp
+                fontSize = 16.sp,
+                maxLines = 1
             )
         }
     }
@@ -190,7 +199,9 @@ fun TransactionItemWithActions(
                     transaction.description,
                     fontWeight = FontWeight.Medium,
                     fontSize = 15.sp,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurface,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
                 Text(
                     text = stringResource(category.titleRes) + " • ${
@@ -200,9 +211,13 @@ fun TransactionItemWithActions(
                         )
                     }",
                     fontSize = 12.sp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
+
+            Spacer(modifier = Modifier.width(8.dp))
 
             Column(horizontalAlignment = Alignment.End) {
                 Text(
@@ -212,7 +227,8 @@ fun TransactionItemWithActions(
                     ),
                     color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
+                    fontSize = 15.sp,
+                    maxLines = 1
                 )
                 IconButton(onClick = onEditClick, modifier = Modifier.size(24.dp)) {
                     Icon(

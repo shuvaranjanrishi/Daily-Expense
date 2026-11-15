@@ -130,8 +130,8 @@ fun DrawerFooter(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 10.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(horizontal = 10.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             // Left: Language Change Button
@@ -145,7 +145,7 @@ fun DrawerFooter(
                     .testTag("drawer_language_button")
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -158,6 +158,7 @@ fun DrawerFooter(
                     Text(
                         text = currentLangLabel,
                         style = MaterialTheme.typography.labelMedium,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer,
                         maxLines = 1
@@ -172,7 +173,8 @@ fun DrawerFooter(
             ) {
                 Text(
                     text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelMedium,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary,
                     maxLines = 1,
@@ -186,7 +188,7 @@ fun DrawerFooter(
                     ),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    fontSize = 11.sp,
+                    fontSize = 10.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     textAlign = TextAlign.Center
@@ -204,7 +206,7 @@ fun DrawerFooter(
                     .testTag("drawer_theme_button")
             ) {
                 Row(
-                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 8.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
@@ -221,6 +223,7 @@ fun DrawerFooter(
                             if (isDarkTheme) R.string.label_light_mode else R.string.label_dark_mode
                         ),
                         style = MaterialTheme.typography.labelMedium,
+                        fontSize = 11.sp,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colorScheme.onSurface,
                         maxLines = 1

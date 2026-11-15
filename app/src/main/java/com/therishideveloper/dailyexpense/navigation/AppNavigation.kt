@@ -1,8 +1,15 @@
 package com.therishideveloper.dailyexpense.navigation
 
 import com.therishideveloper.dailyexpense.R
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,7 +43,17 @@ fun AppNavigation(navController: NavHostController, onOpenDrawer: () -> Unit) {
     val noteViewModel: NoteViewModel = hiltViewModel()
     val downloadViewModel: DownloadViewModel = hiltViewModel()
 
-    NavHost(navController = navController, startDestination = Screens.HomeScreen.route) {
+    NavHost(
+        navController = navController,
+        startDestination = Screens.HomeScreen.route,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+        enterTransition = { fadeIn(animationSpec = tween(180)) },
+        exitTransition = { fadeOut(animationSpec = tween(180)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(180)) },
+        popExitTransition = { fadeOut(animationSpec = tween(180)) }
+    ) {
         composable(Screens.HomeScreen.route) {
             HomeScreen(
                 navController = navController,

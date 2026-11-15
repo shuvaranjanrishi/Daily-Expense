@@ -7,9 +7,11 @@ import android.widget.Toast
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,13 +30,13 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.R
 import com.therishideveloper.dailyexpense.ui.theme.expenseRed
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.NumberUtils
-import java.util.Locale
 
 @Composable
 fun CurrentBalance(currentBalance: String) {
@@ -52,13 +54,16 @@ fun CurrentBalance(currentBalance: String) {
         Text(
             stringResource(R.string.label_current_balance),
             fontSize = 11.sp,
-            color = Color.White.copy(alpha = 0.8f)
+            color = Color.White.copy(alpha = 0.8f),
+            maxLines = 1
         )
         Text(
             displayBalance,
             fontSize = 15.sp,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = Color.White,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -67,18 +72,20 @@ fun CurrentBalance(currentBalance: String) {
 fun SolidPieChart(
     incomeProgress: Float,
     incomeColor: Color,
-    expenseColor: Color
+    expenseColor: Color,
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val incomePercent = (incomeProgress * 100).toInt()
     val expensePercent = 100 - incomePercent
 
-    Canvas(modifier = Modifier.size(130.dp)) {
+    Canvas(modifier = modifier.fillMaxSize()) {
         val canvasWidth = size.width
         val canvasHeight = size.height
         val radius = size.minDimension / 2
+        val dynamicTextSize = (size.minDimension * 0.14f).coerceAtLeast(22f)
 
-        // ১. Draw Expense Slice (নিচের অংশ)
+        // Draw Expense Slice
         drawArc(
             color = expenseColor.copy(alpha = 0.7f),
             startAngle = 0f,
@@ -86,7 +93,7 @@ fun SolidPieChart(
             useCenter = true
         )
 
-        // ২. Draw Income Slice (ওপরের অংশ)
+        // Draw Income Slice
         drawArc(
             color = incomeColor.copy(alpha = 0.7f),
             startAngle = -90f,
@@ -94,43 +101,43 @@ fun SolidPieChart(
             useCenter = true
         )
 
-        // ৩. Draw Percentage Text (Native Canvas ব্যবহার করে)
+        // Draw Percentage Text
         drawContext.canvas.nativeCanvas.apply {
             val paint = Paint().apply {
                 textAlign = Paint.Align.CENTER
-                textSize = 35f // টেক্সট সাইজ
+                textSize = dynamicTextSize
                 isFakeBoldText = true
                 typeface = Typeface.DEFAULT_BOLD
             }
 
-            // --- Income Percentage Text ---
+            // Income Percentage Text
             val incomeMidAngle = (-90f + (360 * incomeProgress) / 2) * (Math.PI / 180)
-            val incomeX = (canvasWidth / 2 + (radius / 1.5f) * Math.cos(incomeMidAngle)).toFloat()
-            val incomeY = (canvasHeight / 2 + (radius / 1.5f) * Math.sin(incomeMidAngle)).toFloat()
+            val incomeX = (canvasWidth / 2 + (radius / 1.55f) * Math.cos(incomeMidAngle)).toFloat()
+            val incomeY = (canvasHeight / 2 + (radius / 1.55f) * Math.sin(incomeMidAngle)).toFloat()
 
             paint.color = Color.White.toArgb()
             if (incomePercent > 5) {
                 drawText(
                     NumberUtils.formatByLocale(context, "$incomePercent%"),
                     incomeX,
-                    incomeY + 10f,
+                    incomeY + dynamicTextSize * 0.35f,
                     paint
                 )
             }
 
-            // --- Expense Percentage Text ---
+            // Expense Percentage Text
             val expenseMidAngle =
                 (-90f + 360 * incomeProgress + (360 * (1 - incomeProgress)) / 2) * (Math.PI / 180)
-            val expenseX = (canvasWidth / 2 + (radius / 1.5f) * Math.cos(expenseMidAngle)).toFloat()
+            val expenseX = (canvasWidth / 2 + (radius / 1.55f) * Math.cos(expenseMidAngle)).toFloat()
             val expenseY =
-                (canvasHeight / 2 + (radius / 1.5f) * Math.sin(expenseMidAngle)).toFloat()
+                (canvasHeight / 2 + (radius / 1.55f) * Math.sin(expenseMidAngle)).toFloat()
 
             paint.color = Color.White.toArgb()
             if (expensePercent > 5) {
                 drawText(
                     NumberUtils.formatByLocale(context, "$expensePercent%"),
                     expenseX,
-                    expenseY + 10f,
+                    expenseY + dynamicTextSize * 0.35f,
                     paint
                 )
             }
@@ -149,12 +156,25 @@ fun TransactionSummaryRow(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(text = label, fontWeight = FontWeight.Bold, color = labelColor, fontSize = 13.sp)
+        Text(
+            text = label,
+            fontWeight = FontWeight.Bold,
+            color = labelColor,
+            fontSize = 13.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f, fill = false)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = NumberUtils.formatAmountByLocale(context, amount),
             fontWeight = FontWeight.Bold,
+            fontSize = 13.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             color = MaterialTheme.colorScheme.onSurface
         )
     }
@@ -171,39 +191,43 @@ fun TransactionSummaryCard(
     balance: Double,
     incomeProgress: Float
 ) {
-    Card(
-        modifier = Modifier
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(2.dp)
-    ) {
-        Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            Box(modifier = Modifier.size(100.dp)) {
-                SolidPieChart(
-                    incomeProgress = incomeProgress,
-                    incomeColor = tealColor,
-                    expenseColor = expenseRed
-                )
-            }
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                TransactionSummaryRow(
-                    stringResource(R.string.income),
-                    totalIncome.toString(),
-                    MaterialTheme.colorScheme.primary
-                )
-                TransactionSummaryRow(
-                    stringResource(R.string.expense),
-                    totalExpense.toString(),
-                    MaterialTheme.colorScheme.error
-                )
-                HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
-                TransactionSummaryRow(
-                    stringResource(R.string.balance),
-                    balance.toString(),
-                    if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                )
+    BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val pieSize = if (maxWidth < 360.dp) 80.dp else 100.dp
+
+        Card(
+            modifier = Modifier
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            elevation = CardDefaults.cardElevation(2.dp)
+        ) {
+            Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                Box(modifier = Modifier.size(pieSize)) {
+                    SolidPieChart(
+                        incomeProgress = incomeProgress,
+                        incomeColor = tealColor,
+                        expenseColor = expenseRed
+                    )
+                }
+                Spacer(modifier = Modifier.width(12.dp))
+                Column(modifier = Modifier.weight(1f)) {
+                    TransactionSummaryRow(
+                        stringResource(R.string.income),
+                        totalIncome.toString(),
+                        MaterialTheme.colorScheme.primary
+                    )
+                    TransactionSummaryRow(
+                        stringResource(R.string.expense),
+                        totalExpense.toString(),
+                        MaterialTheme.colorScheme.error
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
+                    TransactionSummaryRow(
+                        stringResource(R.string.balance),
+                        balance.toString(),
+                        if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                    )
+                }
             }
         }
     }

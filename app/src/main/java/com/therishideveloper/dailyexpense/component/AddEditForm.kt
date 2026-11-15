@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.R
@@ -105,7 +106,14 @@ fun AddEditForm(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title, color = Color.White) },
+                title = {
+                    Text(
+                        title,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, null, tint = Color.White)
@@ -132,12 +140,15 @@ fun AddEditForm(
                 .fillMaxSize()
                 .padding(padding)
                 .consumeWindowInsets(padding)
-                .windowInsetsPadding(WindowInsets.ime) // কিবোর্ডের জন্য ডাইনামিক প্যাডিং
+                .windowInsetsPadding(WindowInsets.ime),
+            contentAlignment = Alignment.TopCenter
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(scrollState) // স্ক্রল স্টেট ব্যবহার
+                    .fillMaxWidth()
+                    .widthIn(max = 600.dp)
+                    .fillMaxHeight()
+                    .verticalScroll(scrollState)
             ) {
                 // ১. ক্যাটাগরি সিলেকশন
                 Text(
@@ -261,7 +272,7 @@ fun AddEditForm(
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(50.dp))
+                    Spacer(modifier = Modifier.height(88.dp))
                 }
             }
         }

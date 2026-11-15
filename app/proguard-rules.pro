@@ -17,5 +17,8 @@
 -keepattributes *Annotation*, Signature, InnerClasses
 -dontnote **
 
-# ৪. আপনার মডেল ক্লাসগুলো সুরক্ষিত রাখা (যদি থাকে)
--keep class com.therishideveloper.dailyexpense.models.** { *; }
+# ৪. ডেটাবেস এন্টিটি ও ব্যাকআপ মডেল সুরক্ষিত রাখা (Release বিল্ডে JSON ব্যাকআপ/রিস্টোরের জন্য)
+-keep class com.therishideveloper.dailyexpense.data.model.** { *; }
+-keep class com.therishideveloper.dailyexpense.data.entity.** { *; }
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken

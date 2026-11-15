@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -86,7 +87,12 @@ fun CalculatorDialog(
         onDismissRequest = { onMinimize(expression, result) },
         properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
             Surface(
                 modifier = Modifier
                     .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
@@ -100,13 +106,18 @@ fun CalculatorDialog(
                             offsetY += dragAmount.y
                         }
                     }
-                    .width(320.dp),
+                    .fillMaxWidth()
+                    .widthIn(min = 260.dp, max = 360.dp),
                 shape = RoundedCornerShape(24.dp),
                 color = MaterialTheme.colorScheme.surface.copy(alpha = if (isDragging) 0.85f else 0.98f),
                 shadowElevation = 12.dp,
                 border = if (isDragging) BorderStroke(1.dp, tealColor.copy(0.5f)) else null
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(
+                    modifier = Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(16.dp)
+                ) {
                     // Drag Handle
                     Box(
                         modifier = Modifier

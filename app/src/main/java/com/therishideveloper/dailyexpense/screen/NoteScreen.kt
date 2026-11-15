@@ -6,10 +6,12 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -21,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -113,7 +116,9 @@ fun NoteScreen(
                 title = {
                     Text(
                         stringResource(R.string.title_personal_notes),
-                        color = Color.White
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
@@ -142,110 +147,121 @@ fun NoteScreen(
             }
         }
     ) { padding ->
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-            Spacer(modifier = Modifier.height(8.dp))
-            NoteDisclaimerCard()
-
-            Card(
+            val pieSize = if (maxWidth < 360.dp) 76.dp else 90.dp
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(4.dp)
+                    .fillMaxSize()
+                    .widthIn(max = 680.dp)
             ) {
+                Spacer(modifier = Modifier.height(8.dp))
+                NoteDisclaimerCard()
+
+                Card(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 4.dp)
+                        .fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(if (pieSize < 90.dp) 12.dp else 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(pieSize)) {
+                            SolidPieChart(incomeProgress, tealColor, expenseRed)
+                        }
+                        Spacer(modifier = Modifier.width(12.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            TransactionSummaryRow(
+                                stringResource(R.string.label_total_debt),
+                                totalDebt.toString(),
+                                MaterialTheme.colorScheme.error
+                            )
+                            TransactionSummaryRow(
+                                stringResource(R.string.label_total_receivable),
+                                totalReceivable.toString(),
+                                MaterialTheme.colorScheme.primary
+                            )
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
+                            TransactionSummaryRow(
+                                if (balanceAmount >= 0) stringResource(R.string.label_net_receivable) else stringResource(
+                                    R.string.label_net_debt
+                                ),
+                                balanceAmount.toString(),
+                                if (balanceAmount >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
+                }
+
                 Row(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp, vertical = 4.dp)
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Box(modifier = Modifier.size(90.dp)) {
-                        SolidPieChart(incomeProgress, tealColor, expenseRed)
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        TransactionSummaryRow(
-                            stringResource(R.string.label_total_debt),
-                            totalDebt.toString(),
-                            MaterialTheme.colorScheme.error
-                        )
-                        TransactionSummaryRow(
-                            stringResource(R.string.label_total_receivable),
-                            totalReceivable.toString(),
-                            MaterialTheme.colorScheme.primary
-                        )
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
-                        TransactionSummaryRow(
-                            if (balanceAmount >= 0) stringResource(R.string.label_net_receivable) else stringResource(
-                                R.string.label_net_debt
-                            ),
-                            balanceAmount.toString(),
-                            if (balanceAmount >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-            }
+                    Row(
+                        modifier = Modifier
+                            .weight(1f)
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        val filterOptions = listOf("All") + NoteType.entries.map { it.dbKey }
+                        filterOptions.forEach { filterKey ->
+                            val label = if (filterKey == "All") stringResource(R.string.filter_all)
+                            else stringResource(NoteType.fromDbKey(filterKey).titleRes)
 
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    val filterOptions = listOf("All") + NoteType.entries.map { it.dbKey }
-                    filterOptions.forEach { filterKey ->
-                        val label = if (filterKey == "All") stringResource(R.string.filter_all)
-                        else stringResource(NoteType.fromDbKey(filterKey).titleRes)
-
-                        FilterChip(
-                            selected = selectedFilter == filterKey,
-                            onClick = { selectedFilter = filterKey },
-                            label = { Text(label, fontSize = 12.sp) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = tealColor,
-                                selectedLabelColor = Color.White
+                            FilterChip(
+                                selected = selectedFilter == filterKey,
+                                onClick = { selectedFilter = filterKey },
+                                label = { Text(label, fontSize = 12.sp, maxLines = 1) },
+                                colors = FilterChipDefaults.filterChipColors(
+                                    selectedContainerColor = tealColor,
+                                    selectedLabelColor = Color.White
+                                )
                             )
+                        }
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    IconButton(
+                        onClick = { showSheet = true },
+                        modifier = Modifier
+                            .background(tealColor, CircleShape)
+                            .size(40.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = stringResource(R.string.label_add_new_note),
+                            tint = Color.White,
+                            modifier = Modifier.size(22.dp)
                         )
                     }
                 }
-                IconButton(
-                    onClick = { showSheet = true },
-                    modifier = Modifier
-                        .background(tealColor, CircleShape)
-                        .size(36.dp)
-                ) {
-                    Icon(
-                        Icons.Default.Add,
-                        null,
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
 
-            LazyColumn(
-                state = lazyListState,
-                modifier = Modifier.fillMaxSize(),
-                contentPadding = PaddingValues(
-                    start = 8.dp,
-                    end = 8.dp,
-                    top = 4.dp,
-                    bottom = 16.dp
-                ),
-                verticalArrangement = Arrangement.spacedBy(6.dp)
-            ) {
-                items(filteredList, key = { it.id }) { note ->
-                    NoteItem(
-                        note,
-                        onDelete = { noteViewModel.deleteNote(note) },
-                    )
+                LazyColumn(
+                    state = lazyListState,
+                    modifier = Modifier.fillMaxSize(),
+                    contentPadding = PaddingValues(
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = 4.dp,
+                        bottom = 88.dp
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    items(filteredList, key = { it.id }) { note ->
+                        NoteItem(
+                            note,
+                            onDelete = { noteViewModel.deleteNote(note) },
+                        )
+                    }
                 }
             }
         }

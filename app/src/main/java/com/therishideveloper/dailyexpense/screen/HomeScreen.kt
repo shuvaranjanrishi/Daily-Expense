@@ -4,23 +4,20 @@ import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.therishideveloper.dailyexpense.R
@@ -45,7 +42,6 @@ import com.therishideveloper.dailyexpense.ui.theme.expenseRed
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.DashboardUtils
 import com.therishideveloper.dailyexpense.util.DateUtils
-import com.therishideveloper.dailyexpense.util.NumberUtils
 import com.therishideveloper.dailyexpense.viewmodel.TransactionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,7 +51,6 @@ fun HomeScreen(
     onMenuClick: () -> Unit,
     viewModel: TransactionViewModel
 ) {
-    val context = LocalContext.current
     // --- States ---
     var showCalculator by remember { mutableStateOf(false) }
     var calcExpression by remember { mutableStateOf("") }
@@ -75,7 +70,14 @@ fun HomeScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.home_title), color = Color.White) },
+                title = {
+                    Text(
+                        stringResource(R.string.home_title),
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = tealColor),
                 navigationIcon = {
                     IconButton(onClick = onMenuClick) {
@@ -95,80 +97,110 @@ fun HomeScreen(
                 onClick = { showCalculator = true },
                 containerColor = tealColor,
                 contentColor = Color.White,
-                modifier = Modifier.padding(bottom = 16.dp, end = 8.dp)
+                modifier = Modifier.padding(bottom = 8.dp, end = 4.dp)
             ) {
-                Icon(Icons.Default.Calculate, null, modifier = Modifier.size(30.dp))
+                Icon(Icons.Default.Calculate, contentDescription = "Calculator", modifier = Modifier.size(28.dp))
             }
         }
 
     ) { padding ->
-        Column(
+        BoxWithConstraints(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-            DisplayTodayDate()
-            // --- Summary Card ---
-            Card(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(4.dp)
-            ) {
-                Row(
-                    modifier = Modifier.padding(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(modifier = Modifier.size(100.dp)) {
-                        SolidPieChart(incomeProgress, tealColor, expenseRed)
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        SummaryClickableRow(
-                            stringResource(R.string.income),
-                            totalIncome.toString(),
-                            MaterialTheme.colorScheme.primary
-                        ) {
-                            navController.navigate("income_expense_screen/" + TransactionType.INCOME.dbKey)
-                        }
-                        Spacer(modifier = Modifier.height(4.dp))
-                        SummaryClickableRow(
-                            stringResource(R.string.expense),
-                            totalExpense.toString(),
-                            MaterialTheme.colorScheme.error
-                        ) {
-                            navController.navigate("income_expense_screen/" + TransactionType.EXPENSE.dbKey)
-                        }
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-                        TransactionSummaryRow(
-                            stringResource(R.string.balance),
-                            balance.toString(),
-                            if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
+            val isNarrow = maxWidth < 360.dp
+            val columns = when {
+                maxWidth < 320.dp -> 2
+                maxWidth >= 600.dp -> 4
+                else -> 3
             }
+            val pieSize = if (isNarrow) 82.dp else 100.dp
+            val horizontalPad = if (isNarrow) 12.dp else 16.dp
+            val dashboardMenus = DashboardUtils.getDashboardMenus()
+            val menuRows = dashboardMenus.chunked(columns)
 
-            // --- Menu Grid & Actions ---
             Column(
                 modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 8.dp)
+                    .widthIn(max = 680.dp)
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(bottom = 88.dp)
             ) {
-                LazyVerticalGrid(columns = GridCells.Fixed(3), modifier = Modifier.fillMaxWidth()) {
-                    items(DashboardUtils.getDashboardMenus()) { item ->
-                        MenuGridItem(item = item) { route ->
-                            handleNavigation(navController, route)
+                DisplayTodayDate(horizontalPadding = horizontalPad)
+
+                // --- Summary Card ---
+                Card(
+                    modifier = Modifier
+                        .padding(horizontal = horizontalPad, vertical = 12.dp)
+                        .fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(4.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.padding(if (isNarrow) 12.dp else 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.size(pieSize)) {
+                            SolidPieChart(incomeProgress, tealColor, expenseRed)
+                        }
+                        Spacer(modifier = Modifier.width(if (isNarrow) 12.dp else 16.dp))
+                        Column(modifier = Modifier.weight(1f)) {
+                            SummaryClickableRow(
+                                stringResource(R.string.income),
+                                totalIncome.toString(),
+                                MaterialTheme.colorScheme.primary
+                            ) {
+                                navController.navigate("income_expense_screen/" + TransactionType.INCOME.dbKey)
+                            }
+                            Spacer(modifier = Modifier.height(6.dp))
+                            SummaryClickableRow(
+                                stringResource(R.string.expense),
+                                totalExpense.toString(),
+                                MaterialTheme.colorScheme.error
+                            ) {
+                                navController.navigate("income_expense_screen/" + TransactionType.EXPENSE.dbKey)
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                            TransactionSummaryRow(
+                                stringResource(R.string.balance),
+                                balance.toString(),
+                                if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                            )
                         }
                     }
                 }
 
+                // --- Adaptive Menu Grid ---
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = horizontalPad - 6.dp)
+                ) {
+                    menuRows.forEach { rowItems ->
+                        Row(modifier = Modifier.fillMaxWidth()) {
+                            rowItems.forEach { item ->
+                                MenuGridItem(
+                                    item = item,
+                                    modifier = Modifier.weight(1f)
+                                ) { route ->
+                                    handleNavigation(navController, route)
+                                }
+                            }
+                            repeat(columns - rowItems.size) {
+                                Spacer(modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+
+                // --- Primary Action Buttons ---
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(horizontal = horizontalPad, vertical = 10.dp),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     ActionButton(
@@ -186,7 +218,6 @@ fun HomeScreen(
                         navController.navigate(Screens.AddExpenseScreen.route)
                     }
                 }
-                Spacer(modifier = Modifier.height(70.dp))
             }
         }
 
@@ -224,11 +255,11 @@ private fun handleNavigation(navController: NavController, route: String) {
 }
 
 @Composable
-private fun DisplayTodayDate() {
+private fun DisplayTodayDate(horizontalPadding: androidx.compose.ui.unit.Dp = 16.dp) {
     val context = LocalContext.current
     Card(
         modifier = Modifier
-            .padding(end = 24.dp, start = 24.dp, top = 8.dp, bottom = 0.dp)
+            .padding(end = horizontalPadding, start = horizontalPadding, top = 10.dp, bottom = 0.dp)
             .fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
         shape = RoundedCornerShape(12.dp),
@@ -236,7 +267,7 @@ private fun DisplayTodayDate() {
     ) {
         Row(
             modifier = Modifier
-                .padding(12.dp)
+                .padding(horizontal = 12.dp, vertical = 10.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
@@ -245,14 +276,16 @@ private fun DisplayTodayDate() {
                 Icons.Default.CalendarToday,
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.size(20.dp)
+                modifier = Modifier.size(18.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = DateUtils.getTodayDateForHomeScreen(context),
-                fontSize = 14.sp,
+                fontSize = 13.sp,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
-                lineHeight = 16.sp
+                lineHeight = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

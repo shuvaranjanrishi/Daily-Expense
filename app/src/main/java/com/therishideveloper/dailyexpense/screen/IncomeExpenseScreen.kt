@@ -8,8 +8,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.therishideveloper.dailyexpense.component.CurrentBalance
@@ -30,7 +32,14 @@ fun IncomeExpenseScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(title, color = Color.White) },
+                title = {
+                    Text(
+                        title,
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color(0xFF009688)),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
@@ -45,18 +54,25 @@ fun IncomeExpenseScreen(
             )
         }
     ) { paddingValues ->
-        LazyColumn(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues),
-            contentPadding = PaddingValues(
-                start = 8.dp, end = 8.dp, top = 4.dp, bottom = 16.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(6.dp)
+            contentAlignment = Alignment.TopCenter
         ) {
-            items(transactions) { item ->
-                TransactionItem(transaction = item)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 680.dp),
+                contentPadding = PaddingValues(
+                    start = 8.dp, end = 8.dp, top = 4.dp, bottom = 16.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                items(transactions) { item ->
+                    TransactionItem(transaction = item)
+                }
             }
         }
     }

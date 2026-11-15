@@ -3,11 +3,11 @@ package com.therishideveloper.dailyexpense.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.ui.theme.tealColor
@@ -32,7 +33,8 @@ fun CategoryCard(
 ) {
     Card(
         modifier = Modifier
-            .width(85.dp)
+            .widthIn(min = 84.dp, max = 124.dp)
+            .defaultMinSize(minHeight = 80.dp)
             .clickable { onSelect() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
@@ -42,8 +44,7 @@ fun CategoryCard(
     ) {
         Column(
             modifier = Modifier
-                .padding(vertical = 12.dp, horizontal = 8.dp)
-                .fillMaxWidth(),
+                .padding(vertical = 12.dp, horizontal = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Icon(
@@ -57,7 +58,8 @@ fun CategoryCard(
                 text = category,
                 color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp,
-                maxLines = 1
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

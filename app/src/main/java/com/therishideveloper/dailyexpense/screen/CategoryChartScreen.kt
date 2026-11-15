@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.ui.theme.expenseRed
@@ -56,7 +57,9 @@ fun CategoryChartScreen(
                 title = {
                     Text(
                         stringResource(R.string.title_category_analytics),
-                        color = Color.White
+                        color = Color.White,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 navigationIcon = {
@@ -139,64 +142,73 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
     // 3. Calculate total amount from database records
     val totalAmount = categoryData.sumOf { it.totalAmount }
 
-    LazyColumn(
+    Box(
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        contentAlignment = Alignment.TopCenter
     ) {
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                elevation = CardDefaults.cardElevation(2.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .widthIn(max = 680.dp),
+            contentPadding = PaddingValues(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            item {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
+                    shape = RoundedCornerShape(24.dp),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                    elevation = CardDefaults.cardElevation(2.dp)
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            stringResource(if (isIncome) R.string.label_total_income_colon else R.string.label_total_expense_colon),
-                            fontSize = 12.sp,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Text(
-                            NumberUtils.formatAmountByLocale(
-                                context,
-                                totalAmount.toString()
-                            ),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    // --- Solid Multi-color Chart Section ---
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        contentAlignment = Alignment.Center
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        if (categoryData.isNotEmpty()) {
-                            MultiColorPieChart(
-                                data = categoryData.map { it.category to it.totalAmount },
-                                colors = chartColors,
-                                modifier = Modifier.size(200.dp)
-                            )
-                        } else {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
                             Text(
-                                text = stringResource(R.string.label_no_data_available),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 12.sp
+                                stringResource(if (isIncome) R.string.label_total_income_colon else R.string.label_total_expense_colon),
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                            Text(
+                                NumberUtils.formatAmountByLocale(
+                                    context,
+                                    totalAmount.toString()
+                                ),
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
                             )
                         }
-                    }
+
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        // --- Solid Multi-color Chart Section ---
+                        BoxWithConstraints(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            val chartSize = if (maxWidth < 300.dp) 160.dp else 200.dp
+                            if (categoryData.isNotEmpty()) {
+                                MultiColorPieChart(
+                                    data = categoryData.map { it.category to it.totalAmount },
+                                    colors = chartColors,
+                                    modifier = Modifier.size(chartSize)
+                                )
+                            } else {
+                                Text(
+                                    text = stringResource(R.string.label_no_data_available),
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -224,6 +236,7 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
                 color = categoryColor
             )
             Spacer(modifier = Modifier.height(8.dp))
+        }
         }
     }
 }
@@ -264,16 +277,17 @@ fun MultiColorPieChart(
                     val y = (canvasHeight / 2) + textRadius * sin(angleInRadians).toFloat()
 
                     drawContext.canvas.nativeCanvas.apply {
+                        val dynamicTextSize = (size.minDimension * 0.11f).coerceAtLeast(22f)
                         val paint = Paint().apply {
                             color = android.graphics.Color.WHITE
-                            textSize = 35f
+                            textSize = dynamicTextSize
                             textAlign = Paint.Align.CENTER
                             isFakeBoldText = true
                         }
                         drawText(
                             NumberUtils.formatByLocale(context, percentage.toString()) + "%",
                             x,
-                            y + 10f,
+                            y + (dynamicTextSize * 0.35f),
                             paint
                         )
                     }
@@ -328,21 +342,27 @@ fun CategoryStatItem(
             Column(modifier = Modifier.weight(1f)) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         stringResource(category.titleRes),
                         fontWeight = FontWeight.Bold,
                         fontSize = 15.sp,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f)
                     )
+                    Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         NumberUtils.formatAmountByLocale(
                             context,
                             amount.toString()
                         ),
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface,
+                        maxLines = 1
                     )
                 }
 

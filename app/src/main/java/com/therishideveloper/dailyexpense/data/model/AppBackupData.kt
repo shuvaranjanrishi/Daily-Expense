@@ -4,6 +4,6 @@ import com.therishideveloper.dailyexpense.data.entity.Note
 import com.therishideveloper.dailyexpense.data.entity.Transaction
 
 data class AppBackupData(
-    val transactions: List<Transaction>,
-    val notes: List<Note>
+    val transactions: List<Transaction>? = emptyList(),
+    val notes: List<Note>? = emptyList()
 )

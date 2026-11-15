@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyColumn
@@ -176,13 +177,19 @@ fun AllTransactionScreen(
             )
         }
     ) { padding ->
-        Column(
+        Box(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
+                .background(MaterialTheme.colorScheme.background),
+            contentAlignment = Alignment.TopCenter
         ) {
-            // 1. Search & Date Selector Row
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .widthIn(max = 680.dp)
+            ) {
+                // 1. Search & Date Selector Row
             SearchAndDateRow(
                 searchQuery = searchQuery,
                 onSearchChange = { searchQuery = it },
@@ -268,6 +275,7 @@ fun AllTransactionScreen(
                     )
                 }
             }
+            }
         }
     }
 }
@@ -276,7 +284,14 @@ fun AllTransactionScreen(
 @Composable
 fun AllTransactionTopBar(onBack: () -> Unit, onDownload: () -> Unit, onShare: () -> Unit) {
     TopAppBar(
-        title = { Text(stringResource(R.string.title_all_transactions), color = Color.White) },
+        title = {
+            Text(
+                text = stringResource(R.string.title_all_transactions),
+                color = Color.White,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        },
         colors = TopAppBarDefaults.topAppBarColors(containerColor = tealColor),
         navigationIcon = {
             IconButton(onClick = onBack) {

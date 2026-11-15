@@ -147,11 +147,11 @@ class TransactionViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val backupData = backupHelper.restoreBackup(uri)
-                if (backupData != null) {
+                if (backupData != null && (backupData.transactions != null || backupData.notes != null)) {
                     transactionRepo.deleteAllTransactions()
                     noteRepo.deleteAllNotes()
-                    backupData.transactions.forEach { transactionRepo.insert(it) }
-                    backupData.notes.forEach { noteRepo.insertNote(it) } // আপনার নোট ইনসার্ট ফাংশন
+                    backupData.transactions.orEmpty().forEach { transactionRepo.insert(it) }
+                    backupData.notes.orEmpty().forEach { noteRepo.insertNote(it) }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
