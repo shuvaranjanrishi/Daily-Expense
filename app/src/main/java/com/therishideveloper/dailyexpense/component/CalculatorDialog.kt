@@ -93,13 +93,15 @@ fun CalculatorDialog(
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
+            val bodyScrollState = rememberScrollState()
             Surface(
                 modifier = Modifier
                     .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
                     .pointerInput(Unit) {
                         detectDragGestures(
                             onDragStart = { isDragging = true },
-                            onDragEnd = { isDragging = false }
+                            onDragEnd = { isDragging = false },
+                            onDragCancel = { isDragging = false }
                         ) { change, dragAmount ->
                             change.consume()
                             offsetX += dragAmount.x
@@ -113,56 +115,63 @@ fun CalculatorDialog(
                 shadowElevation = 12.dp,
                 border = if (isDragging) BorderStroke(1.dp, tealColor.copy(0.5f)) else null
             ) {
-                Column(
-                    modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .padding(16.dp)
-                ) {
-                    // Drag Handle
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    // Drag Handle (outside verticalScroll so vertical dragging always moves the dialog)
                     Box(
                         modifier = Modifier
-                            .size(40.dp, 4.dp)
-                            .background(Color.LightGray.copy(0.5f), CircleShape)
-                            .align(Alignment.CenterHorizontally)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    // Display Section
-                    DisplayArea(expression, result, scrollState)
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-                    // Buttons Grid
-                    buttonRows.forEach { row ->
-                        Row(
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Box(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            row.forEach { btn ->
-                                CalculatorKey(
-                                    data = btn,
-                                    modifier = Modifier.weight(btn.weight),
-                                    onClick = {
-                                        handleCalculatorAction(
-                                            btn.action,
-                                            expression
-                                        ) { newExp, newRes ->
-                                            expression = newExp
-                                            if (newRes.isNotEmpty()) result = newRes
-                                        }
-                                    }
-                                )
-                            }
-                        }
+                                .size(40.dp, 4.dp)
+                                .background(Color.LightGray.copy(0.5f), CircleShape)
+                        )
                     }
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .verticalScroll(bodyScrollState, enabled = bodyScrollState.maxValue > 0)
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp, top = 4.dp)
+                    ) {
+                        // Display Section
+                        DisplayArea(expression, result, scrollState)
 
-                    // Bottom Actions
-                    DialogFooter(onClose, onMinimize = { onMinimize(expression, result) })
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        // Buttons Grid
+                        buttonRows.forEach { row ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                row.forEach { btn ->
+                                    CalculatorKey(
+                                        data = btn,
+                                        modifier = Modifier.weight(btn.weight),
+                                        onClick = {
+                                            handleCalculatorAction(
+                                                btn.action,
+                                                expression
+                                            ) { newExp, newRes ->
+                                                expression = newExp
+                                                if (newRes.isNotEmpty()) result = newRes
+                                            }
+                                        }
+                                    )
+                                }
+                            }
+                        }
+
+                        Spacer(modifier = Modifier.height(20.dp))
+
+                        // Bottom Actions
+                        DialogFooter(onClose, onMinimize = { onMinimize(expression, result) })
+                    }
                 }
             }
         }
