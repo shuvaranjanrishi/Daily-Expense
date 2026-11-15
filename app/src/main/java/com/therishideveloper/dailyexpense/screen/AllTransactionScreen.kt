@@ -180,7 +180,7 @@ fun AllTransactionScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFF8F9FA))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             // 1. Search & Date Selector Row
             SearchAndDateRow(
@@ -354,11 +354,11 @@ fun TransactionTabRow(selectedTab: Int, onTabSelected: (Int) -> Unit) {
     TabRow(
         selectedTabIndex = selectedTab,
         containerColor = Color.Transparent,
-        contentColor = tealColor,
+        contentColor = MaterialTheme.colorScheme.primary,
         indicator = { tabPositions ->
             TabRowDefaults.SecondaryIndicator(
                 Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                color = tealColor
+                color = MaterialTheme.colorScheme.primary
             )
         },
         divider = {}
@@ -368,8 +368,8 @@ fun TransactionTabRow(selectedTab: Int, onTabSelected: (Int) -> Unit) {
 
         tabs.forEachIndexed { index, title ->
             Tab(
-                selectedContentColor = tealColor,
-                unselectedContentColor = Color.Gray,
+                selectedContentColor = MaterialTheme.colorScheme.primary,
+                unselectedContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 selected = selectedTab == index,
                 onClick = { onTabSelected(index) },
                 text = {

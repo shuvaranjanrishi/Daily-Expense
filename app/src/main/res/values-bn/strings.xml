@@ -198,5 +198,20 @@
     <string name="btn_yes_restore">হ্যাঁ, রিস্টোর করুন</string>
     <string name="msg_backup_failed">ব্যাকআপ ব্যর্থ হয়েছে!</string>
     <string name="msg_restore_success">ডেটা সফলভাবে রিস্টোর করা হয়েছে!</string>
+    <string name="label_dark_mode">ডার্ক</string>
+    <string name="label_light_mode">লাইট</string>
+    <string name="backup_save_chooser">ব্যাকআপ ফাইল সংরক্ষণ করুন</string>
+    <string name="channel_downloads">ফাইল ডাউনলোড</string>
+    <string name="notif_download_title">ডাউনলোড সম্পন্ন হয়েছে</string>
+    <string name="notif_file_saved">ফাইল সংরক্ষিত: %1$s</string>
+    <string name="excel_sheet_name">লেনদেন</string>
+    <string name="excel_col_date">তারিখ</string>
+    <string name="excel_col_category">ক্যাটেগরি</string>
+    <string name="excel_col_description">বিবরণ</string>
+    <string name="excel_col_amount">পরিমাণ</string>
+    <string name="excel_col_type">ধরণ</string>
+    <string name="excel_share_subject">লেনদেনের রিপোর্ট</string>
+    <string name="excel_share_body">Daily Expense অ্যাপ থেকে তৈরি করা আমার লেনদেনের রিপোর্ট এখানে দেওয়া হলো।</string>
+    <string name="excel_share_chooser">রিপোর্ট শেয়ার করুন</string>
 
 </resources>

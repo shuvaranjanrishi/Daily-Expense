@@ -78,17 +78,17 @@ fun CategoryChartScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFF8F9FA))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             // ১. Tab Selection
             TabRow(
                 selectedTabIndex = selectedTab,
-                containerColor = Color.White,
-                contentColor = tealColor,
+                containerColor = MaterialTheme.colorScheme.surface,
+                contentColor = MaterialTheme.colorScheme.primary,
                 indicator = { tabPositions ->
                     TabRowDefaults.SecondaryIndicator(
                         Modifier.tabIndicatorOffset(tabPositions[selectedTab]),
-                        color = if (selectedTab == 0) tealColor else expenseRed
+                        color = if (selectedTab == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                     )
                 }
             ) {
@@ -100,7 +100,11 @@ fun CategoryChartScreen(
                             Text(
                                 text = title,
                                 fontWeight = FontWeight.Bold,
-                                color = if (selectedTab == index) (if (index == 0) tealColor else expenseRed) else Color.Gray
+                                color = if (selectedTab == index) {
+                                    if (index == 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
+                                } else {
+                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                }
                             )
                         }
                     )
@@ -146,18 +150,18 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
                 shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(2.dp)
             ) {
                 Column(
-                    modifier = Modifier.padding(16.dp), // Added padding for better look
+                    modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Row {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
                             stringResource(if (isIncome) R.string.label_total_income_colon else R.string.label_total_expense_colon),
                             fontSize = 12.sp,
-                            color = Color.Gray
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                         Text(
                             NumberUtils.formatAmountByLocale(
@@ -166,7 +170,7 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
                             ),
                             fontSize = 16.sp,
                             fontWeight = FontWeight.ExtraBold,
-                            color = themeColor
+                            color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                         )
                     }
 
@@ -188,7 +192,7 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
                         } else {
                             Text(
                                 text = stringResource(R.string.label_no_data_available),
-                                color = Color.LightGray,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 fontSize = 12.sp
                             )
                         }
@@ -201,7 +205,7 @@ fun CategoryAnalysisContent(isIncome: Boolean, viewModel: TransactionViewModel) 
                         Text(
                             text = stringResource(R.string.label_category_distribution),
                             fontSize = 12.sp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             fontWeight = FontWeight.Medium
                         )
                     }
@@ -294,7 +298,7 @@ fun CategoryStatItem(
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(
@@ -315,7 +319,7 @@ fun CategoryStatItem(
                     imageVector = category.icon,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = if (isIncome) tealColor else expenseRed
+                    tint = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
             }
 
@@ -329,13 +333,16 @@ fun CategoryStatItem(
                     Text(
                         stringResource(category.titleRes),
                         fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
+                        fontSize = 15.sp,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     Text(
                         NumberUtils.formatAmountByLocale(
                             context,
                             amount.toString()
-                        ), fontWeight = FontWeight.Bold, color = Color.DarkGray
+                        ),
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
 
@@ -348,7 +355,7 @@ fun CategoryStatItem(
                         .fillMaxWidth()
                         .height(6.dp),
                     color = color,
-                    trackColor = color.copy(0.1f),
+                    trackColor = color.copy(0.12f),
                     strokeCap = StrokeCap.Round
                 )
 
@@ -368,12 +375,12 @@ fun CategoryStatItem(
                             formattedPercentage
                         ),
                         fontSize = 11.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
                         text = stringResource(R.string.label_target_100),
                         fontSize = 11.sp,
-                        color = Color.Gray
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }

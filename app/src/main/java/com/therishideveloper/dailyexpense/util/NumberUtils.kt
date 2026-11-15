@@ -8,8 +8,7 @@ import java.util.Locale
 object NumberUtils {
 
     fun formatByLocale(context: Context, input: String): String {
-        val locale = context.resources.configuration.locales[0]
-        val language = locale.language
+        val language = LocaleHelper.getCurrentLocale(context).language
 
         if (language != "bn" && language != "hi") return input
 
@@ -28,12 +27,11 @@ object NumberUtils {
     }
 
     fun formatAmountByLocale(context: Context, input: String): String {
-
         val cleanInput = input.replace(",", "")
         val amount = cleanInput.toDoubleOrNull() ?: return input
-        val language = context.resources.configuration.locales[0].language
+        val language = LocaleHelper.getCurrentLocale(context).language
 
-        val commaFormatter = NumberFormat.getInstance(Locale("en", "IN")).apply {
+        val commaFormatter = NumberFormat.getInstance(Locale.forLanguageTag("en-IN")).apply {
             maximumFractionDigits = 2
             minimumFractionDigits = if (amount == 0.0) 1 else 0
         }
@@ -56,5 +54,4 @@ object NumberUtils {
             if (char in '0'..'9') digits[char - '0'] else char
         }.joinToString("")
     }
-
 }

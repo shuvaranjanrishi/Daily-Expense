@@ -37,7 +37,7 @@ fun DownloadLoaderDialog() {
     ) {
         Card(
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(containerColor = Color.White),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
             elevation = CardDefaults.cardElevation(8.dp)
         ) {
             Column(
@@ -49,9 +49,9 @@ fun DownloadLoaderDialog() {
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(48.dp),
-                    color = tealColor,
+                    color = MaterialTheme.colorScheme.primary,
                     strokeWidth = 4.dp,
-                    trackColor = tealColor.copy(alpha = 0.1f)
+                    trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -60,7 +60,7 @@ fun DownloadLoaderDialog() {
                     text = stringResource(R.string.msg_generating_report), // Excel report generation text
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black
+                    color = MaterialTheme.colorScheme.onSurface
                 )
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -68,7 +68,7 @@ fun DownloadLoaderDialog() {
                 Text(
                     text = stringResource(R.string.msg_wait_excel),
                     fontSize = 13.sp,
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
                     lineHeight = 18.sp
                 )
@@ -85,7 +85,7 @@ fun TransactionItem(transaction: Transaction) {
 
     Card(
         modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(
@@ -96,7 +96,7 @@ fun TransactionItem(transaction: Transaction) {
                 modifier = Modifier
                     .size(40.dp)
                     .background(
-                        if (isIncome) tealColor.copy(alpha = 0.1f) else expenseRed.copy(alpha = 0.1f),
+                        if (isIncome) tealColor.copy(alpha = 0.12f) else expenseRed.copy(alpha = 0.12f),
                         RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -106,7 +106,7 @@ fun TransactionItem(transaction: Transaction) {
                     imageVector = category.icon,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = if (isIncome) tealColor else expenseRed
+                    tint = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
             }
 
@@ -116,7 +116,8 @@ fun TransactionItem(transaction: Transaction) {
                 Text(
                     text = transaction.description,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    fontSize = 16.sp,
+                    color = MaterialTheme.colorScheme.onSurface
                 )
                 Text(
                     text = stringResource(category.titleRes) + " • ${
@@ -126,7 +127,7 @@ fun TransactionItem(transaction: Transaction) {
                         )
                     }",
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
             Text(
@@ -157,7 +158,7 @@ fun TransactionItemWithActions(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(1.dp)
     ) {
         Row(
@@ -168,7 +169,7 @@ fun TransactionItemWithActions(
                 modifier = Modifier
                     .size(40.dp)
                     .background(
-                        if (isIncome) tealColor.copy(alpha = 0.1f) else expenseRed.copy(alpha = 0.1f),
+                        if (isIncome) tealColor.copy(alpha = 0.12f) else expenseRed.copy(alpha = 0.12f),
                         RoundedCornerShape(8.dp)
                     ),
                 contentAlignment = Alignment.Center
@@ -178,14 +179,19 @@ fun TransactionItemWithActions(
                     imageVector = category.icon,
                     contentDescription = null,
                     modifier = Modifier.size(20.dp),
-                    tint = if (isIncome) tealColor else expenseRed
+                    tint = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
             }
 
             Spacer(modifier = Modifier.width(12.dp))
 
             Column(modifier = Modifier.weight(1f)) {
-                Text(transaction.description, fontWeight = FontWeight.Medium, fontSize = 15.sp)
+                Text(
+                    transaction.description,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 15.sp,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
                 Text(
                     text = stringResource(category.titleRes) + " • ${
                         DateUtils.formatToDisplay(
@@ -194,7 +200,7 @@ fun TransactionItemWithActions(
                         )
                     }",
                     fontSize = 12.sp,
-                    color = Color.Gray
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
@@ -204,7 +210,7 @@ fun TransactionItemWithActions(
                         context,
                         transaction.amount.toString()
                     ),
-                    color = if (isIncome) tealColor else expenseRed,
+                    color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                     fontWeight = FontWeight.Bold,
                     fontSize = 15.sp
                 )
@@ -212,7 +218,7 @@ fun TransactionItemWithActions(
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = null,
-                        tint = Color.LightGray,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
                         modifier = Modifier.size(16.dp)
                     )
                 }
@@ -234,8 +240,12 @@ fun TransactionDetailSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        containerColor = Color.White,
-        dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) },
+        containerColor = MaterialTheme.colorScheme.surface,
+        dragHandle = {
+            BottomSheetDefaults.DragHandle(
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f)
+            )
+        },
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
     ) {
         Column(
@@ -247,14 +257,14 @@ fun TransactionDetailSheet(
         ) {
             Surface(
                 shape = RoundedCornerShape(12.dp),
-                color = if (isIncome) tealColor.copy(0.1f) else expenseRed.copy(0.1f),
+                color = if (isIncome) tealColor.copy(0.12f) else expenseRed.copy(0.12f),
                 modifier = Modifier.size(48.dp)
             ) {
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = category.icon,
                         contentDescription = null,
-                        tint = if (isIncome) tealColor else expenseRed,
+                        tint = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                         modifier = Modifier.size(26.dp)
                     )
                 }
@@ -264,6 +274,7 @@ fun TransactionDetailSheet(
                 text = stringResource(category.titleRes),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier.padding(top = 12.dp)
             )
 
@@ -271,7 +282,7 @@ fun TransactionDetailSheet(
                 text = (if (isIncome) "+ " + stringResource(R.string.currency_symbol) else "- " + stringResource(
                     R.string.currency_symbol
                 )) + NumberUtils.formatByLocale(context, transaction.amount.toString()),
-                color = if (isIncome) tealColor else expenseRed,
+                color = if (isIncome) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.SemiBold
             )
@@ -288,12 +299,12 @@ fun TransactionDetailSheet(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = stringResource(R.string.description),
-                    color = Color.Gray,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                     fontSize = 14.sp
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Surface(
-                    color = Color(0xFFF5F5F5),
+                    color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(8.dp),
                     modifier = Modifier.fillMaxWidth()
                 ) {
@@ -301,7 +312,7 @@ fun TransactionDetailSheet(
                         text = transaction.description,
                         modifier = Modifier.padding(12.dp),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                 }
             }
@@ -312,7 +323,7 @@ fun TransactionDetailSheet(
 @Composable
 fun DetailInfoRow(label: String, value: String) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-        Text(text = label, color = Color.Gray, fontSize = 14.sp)
-        Text(text = value, fontWeight = FontWeight.SemiBold, color = Color.Black)
+        Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 14.sp)
+        Text(text = value, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.onSurface)
     }
 }

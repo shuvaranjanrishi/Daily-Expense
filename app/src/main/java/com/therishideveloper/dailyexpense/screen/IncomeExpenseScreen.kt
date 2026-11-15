@@ -1,5 +1,6 @@
 package com.therishideveloper.dailyexpense.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -47,6 +48,7 @@ fun IncomeExpenseScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(paddingValues),
             contentPadding = PaddingValues(
                 start = 8.dp, end = 8.dp, top = 4.dp, bottom = 16.dp

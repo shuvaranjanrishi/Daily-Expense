@@ -143,7 +143,7 @@ fun AddEditForm(
                 Text(
                     stringResource(R.string.select_category),
                     fontWeight = FontWeight.SemiBold,
-                    color = tealColor,
+                    color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(16.dp)
                 )
                 LazyRow(
@@ -177,7 +177,11 @@ fun AddEditForm(
                         onValueChange = { amount = it },
                         label = { Text(stringResource(R.string.amount)) },
                         leadingIcon = {
-                            Text(stringResource(R.string.currency_symbol), color = tealColor, fontWeight = FontWeight.Bold)
+                            Text(
+                                stringResource(R.string.currency_symbol),
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold
+                            )
                         },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -217,37 +221,13 @@ fun AddEditForm(
                             .padding(top = 8.dp)
                             .size(56.dp),
                         shape = RoundedCornerShape(12.dp),
-                        color = tealColor.copy(0.1f)
+                        color = MaterialTheme.colorScheme.primary.copy(0.12f)
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Icon(Icons.Default.DateRange, null, tint = tealColor)
+                            Icon(Icons.Default.DateRange, null, tint = MaterialTheme.colorScheme.primary)
                         }
                     }
                 }
-//                    Row(
-//                        modifier = Modifier.fillMaxWidth(),
-//                        verticalAlignment = Alignment.CenterVertically,
-//                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-//                    ) {
-//                        OutlinedTextField(
-//                            value = DateUtils.formatToDisplay(context, date),
-//                            onValueChange = {},
-//                            readOnly = true,
-//                            label = { Text(stringResource(R.string.date)) },
-//                            modifier = Modifier.weight(1f),
-//                            shape = RoundedCornerShape(12.dp)
-//                        )
-//                        Surface(
-//                            onClick = { DateUtils.showDatePicker(context, date) { date = it } },
-//                            modifier = Modifier.size(56.dp),
-//                            shape = RoundedCornerShape(12.dp),
-//                            color = tealColor.copy(0.1f)
-//                        ) {
-//                            Box(contentAlignment = Alignment.Center) {
-//                                Icon(Icons.Default.DateRange, null, tint = tealColor)
-//                            }
-//                        }
-//                    }
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -257,9 +237,12 @@ fun AddEditForm(
                             .fillMaxWidth()
                             .height(56.dp),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = tealColor)
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = tealColor,
+                            contentColor = Color.White
+                        )
                     ) {
-                        Text(text = buttonText, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(text = buttonText, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.White)
                     }
 
                     if (transactionId != null && onDelete != null) {

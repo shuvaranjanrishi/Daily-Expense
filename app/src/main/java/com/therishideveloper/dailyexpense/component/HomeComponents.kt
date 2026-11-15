@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,15 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.therishideveloper.dailyexpense.R
 import com.therishideveloper.dailyexpense.data.model.DashboardItem
-import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.util.NumberUtils
 
 @Composable
@@ -40,28 +40,32 @@ fun MenuGridItem(item: DashboardItem, onItemClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
-            .aspectRatio(1f) // Makes the card square
+            .aspectRatio(1f)
+            .testTag("menu_grid_item_${item.route}")
             .clickable { onItemClick(item.route) },
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Icon(
                 painter = painterResource(id = item.iconRes),
-                contentDescription = null,
+                contentDescription = stringResource(id = item.titleRes),
                 modifier = Modifier.size(36.dp),
-                tint = tealColor
+                tint = MaterialTheme.colorScheme.primary
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = stringResource(id = item.titleRes),
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }
@@ -73,7 +77,7 @@ fun SummaryClickableRow(label: String, amount: String, color: Color, onClick: ()
     Surface(
         onClick = onClick,
         shape = RoundedCornerShape(8.dp),
-        color = color.copy(alpha = 0.1f),
+        color = color.copy(alpha = 0.12f),
         modifier = Modifier.fillMaxWidth()
     ) {
         Row(
@@ -85,7 +89,8 @@ fun SummaryClickableRow(label: String, amount: String, color: Color, onClick: ()
             Text(
                 text = NumberUtils.formatAmountByLocale(context, amount),
                 fontWeight = FontWeight.Bold,
-                fontSize = 13.sp
+                fontSize = 13.sp,
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

@@ -198,5 +198,20 @@
     <string name="btn_yes_restore">हाँ, रिस्टोर करें</string>
     <string name="msg_backup_failed">बैकअप विफल रहा!</string>
     <string name="msg_restore_success">डेटा सफलतापूर्वक रिस्टोर किया गया!</string>
+    <string name="label_dark_mode">डार्क</string>
+    <string name="label_light_mode">लाइट</string>
+    <string name="backup_save_chooser">बैकअप फ़ाइल सहेजें</string>
+    <string name="channel_downloads">फ़ाइल डाउनलोड</string>
+    <string name="notif_download_title">डाउनलोड पूरा हुआ</string>
+    <string name="notif_file_saved">फ़ाइल सहेजी गई: %1$s</string>
+    <string name="excel_sheet_name">लेनदेन</string>
+    <string name="excel_col_date">तारीख</string>
+    <string name="excel_col_category">श्रेणी</string>
+    <string name="excel_col_description">विवरण</string>
+    <string name="excel_col_amount">राशि</string>
+    <string name="excel_col_type">प्रकार</string>
+    <string name="excel_share_subject">लेनदेन रिपोर्ट</string>
+    <string name="excel_share_body">यहाँ Daily Expense ऐप से बनाई गई मेरी लेनदेन रिपोर्ट है।</string>
+    <string name="excel_share_chooser">रिपोर्ट साझा करें</string>
 
 </resources>

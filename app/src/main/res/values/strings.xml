@@ -197,5 +197,20 @@
     <string name="btn_yes_restore">Yes, Restore</string>
     <string name="msg_backup_failed">Backup Failed!</string>
     <string name="msg_restore_success">Data Restored Successfully!</string>
+    <string name="label_dark_mode">Dark</string>
+    <string name="label_light_mode">Light</string>
+    <string name="backup_save_chooser">Save Backup File</string>
+    <string name="channel_downloads">File Downloads</string>
+    <string name="notif_download_title">Download Complete</string>
+    <string name="notif_file_saved">File saved: %1$s</string>
+    <string name="excel_sheet_name">Transactions</string>
+    <string name="excel_col_date">Date</string>
+    <string name="excel_col_category">Category</string>
+    <string name="excel_col_description">Description</string>
+    <string name="excel_col_amount">Amount</string>
+    <string name="excel_col_type">Type</string>
+    <string name="excel_share_subject">Transaction Report</string>
+    <string name="excel_share_body">Here is my transaction report generated from Daily Expense app.</string>
+    <string name="excel_share_chooser">Share Report via</string>
 
 </resources>

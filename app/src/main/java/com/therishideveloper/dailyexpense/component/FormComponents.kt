@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,7 +35,9 @@ fun CategoryCard(
             .width(85.dp)
             .clickable { onSelect() },
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = if (isSelected) tealColor else Color.White),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) tealColor else MaterialTheme.colorScheme.surface
+        ),
         elevation = CardDefaults.cardElevation(if (isSelected) 4.dp else 2.dp)
     ) {
         Column(
@@ -46,13 +49,13 @@ fun CategoryCard(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = if (isSelected) Color.White else tealColor,
+                tint = if (isSelected) Color.White else MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(28.dp)
             )
             Spacer(Modifier.height(8.dp))
             Text(
                 text = category,
-                color = if (isSelected) Color.White else Color.Black,
+                color = if (isSelected) Color.White else MaterialTheme.colorScheme.onSurface,
                 fontSize = 12.sp,
                 maxLines = 1
             )

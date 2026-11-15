@@ -30,7 +30,9 @@ object ExcelHelper {
         val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val channel = NotificationChannel(
-            CHANNEL_ID, "File Downloads", NotificationManager.IMPORTANCE_HIGH
+            CHANNEL_ID,
+            context.getString(R.string.channel_downloads),
+            NotificationManager.IMPORTANCE_HIGH
         )
         manager.createNotificationChannel(channel)
 
@@ -48,8 +50,8 @@ object ExcelHelper {
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.drawable.app_logo)
-            .setContentTitle("Download Complete")
-            .setContentText("File saved: ${file.name}")
+            .setContentTitle(context.getString(R.string.notif_download_title))
+            .setContentText(context.getString(R.string.notif_file_saved, file.name))
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
@@ -60,10 +62,16 @@ object ExcelHelper {
 
     fun createTransactionExcel(context: Context, transactions: List<Transaction>): File? {
         val workbook = XSSFWorkbook()
-        val sheet = workbook.createSheet("Transactions")
+        val sheet = workbook.createSheet(context.getString(R.string.excel_sheet_name))
 
         val headerRow = sheet.createRow(0)
-        val headers = listOf("Date", "Category", "Description", "Amount", "Type")
+        val headers = listOf(
+            context.getString(R.string.excel_col_date),
+            context.getString(R.string.excel_col_category),
+            context.getString(R.string.excel_col_description),
+            context.getString(R.string.excel_col_amount),
+            context.getString(R.string.excel_col_type)
+        )
         headers.forEachIndexed { index, title ->
             headerRow.createCell(index).setCellValue(title)
         }
@@ -75,7 +83,7 @@ object ExcelHelper {
             val type = TransactionType.fromDbKey(tx.transactionType)
             val typeLabel = context.getString(type.titleRes)
             val amount = NumberUtils.formatByLocale(context, tx.amount.toString())
-            row.createCell(0).setCellValue(DateUtils.formatToDisplay(tx.date))
+            row.createCell(0).setCellValue(DateUtils.formatToDisplay(context, tx.date))
             row.createCell(1).setCellValue(categoryLabel)
             row.createCell(2).setCellValue(tx.description)
             row.createCell(3).setCellValue(amount)
@@ -124,14 +132,16 @@ object ExcelHelper {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_SUBJECT, "Transaction Report")
+            putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.excel_share_subject))
             putExtra(
                 Intent.EXTRA_TEXT,
-                "Here is my transaction report generated from Daily Expense app."
+                context.getString(R.string.excel_share_body)
             )
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
 
-        context.startActivity(Intent.createChooser(intent, "Share Report via"))
+        context.startActivity(
+            Intent.createChooser(intent, context.getString(R.string.excel_share_chooser))
+        )
     }
 }

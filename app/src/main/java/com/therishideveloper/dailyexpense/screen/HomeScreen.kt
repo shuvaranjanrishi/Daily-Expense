@@ -106,7 +106,7 @@ fun HomeScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             DisplayTodayDate()
             // --- Summary Card ---
@@ -114,7 +114,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(16.dp)
                     .fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Row(
@@ -129,7 +129,7 @@ fun HomeScreen(
                         SummaryClickableRow(
                             stringResource(R.string.income),
                             totalIncome.toString(),
-                            tealColor
+                            MaterialTheme.colorScheme.primary
                         ) {
                             navController.navigate("income_expense_screen/" + TransactionType.INCOME.dbKey)
                         }
@@ -137,7 +137,7 @@ fun HomeScreen(
                         SummaryClickableRow(
                             stringResource(R.string.expense),
                             totalExpense.toString(),
-                            expenseRed
+                            MaterialTheme.colorScheme.error
                         ) {
                             navController.navigate("income_expense_screen/" + TransactionType.EXPENSE.dbKey)
                         }
@@ -145,7 +145,7 @@ fun HomeScreen(
                         TransactionSummaryRow(
                             stringResource(R.string.balance),
                             balance.toString(),
-                            tealColor
+                            if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -230,9 +230,9 @@ private fun DisplayTodayDate() {
         modifier = Modifier
             .padding(end = 24.dp, start = 24.dp, top = 8.dp, bottom = 0.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = tealColor.copy(alpha = 0.05f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f)),
         shape = RoundedCornerShape(12.dp),
-        border = BorderStroke(1.dp, tealColor.copy(alpha = 0.2f))
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.25f))
     ) {
         Row(
             modifier = Modifier
@@ -244,14 +244,14 @@ private fun DisplayTodayDate() {
             Icon(
                 Icons.Default.CalendarToday,
                 contentDescription = null,
-                tint = tealColor,
+                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(20.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = DateUtils.getTodayDateForHomeScreen(context),
                 fontSize = 14.sp,
-                color = Color.DarkGray,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
                 lineHeight = 16.sp
             )
         }

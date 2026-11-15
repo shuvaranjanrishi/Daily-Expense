@@ -102,7 +102,7 @@ fun CalculatorDialog(
                     }
                     .width(320.dp),
                 shape = RoundedCornerShape(24.dp),
-                color = Color.White.copy(alpha = if (isDragging) 0.8f else 0.98f),
+                color = MaterialTheme.colorScheme.surface.copy(alpha = if (isDragging) 0.85f else 0.98f),
                 shadowElevation = 12.dp,
                 border = if (isDragging) BorderStroke(1.dp, tealColor.copy(0.5f)) else null
             ) {
@@ -239,7 +239,7 @@ fun DisplayArea(expression: String, result: String, scrollState: ScrollState) {
         Text(
             text = NumberUtils.formatByLocale(context, expression).ifEmpty { "0" },
             fontSize = 18.sp,
-            color = Color.Gray,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 1,
             modifier = Modifier.horizontalScroll(scrollState)
         )
@@ -247,7 +247,7 @@ fun DisplayArea(expression: String, result: String, scrollState: ScrollState) {
             text = NumberUtils.formatByLocale(context, result),
             fontSize = 32.sp,
             fontWeight = FontWeight.Bold,
-            color = Color(0xFF008080),
+            color = MaterialTheme.colorScheme.primary,
             maxLines = 1
         )
     }
@@ -259,13 +259,13 @@ fun CalculatorKey(data: CalcButtonData, modifier: Modifier, onClick: () -> Unit)
     val tealColor = Color(0xFF008080)
     val color = when (data.action) {
         is CalcAction.Calculate -> tealColor
-        is CalcAction.Clear, is CalcAction.Delete -> Color(0xFFFF5252).copy(0.1f)
-        is CalcAction.Operation -> tealColor.copy(0.1f)
-        else -> Color.LightGray.copy(0.25f)
+        is CalcAction.Clear, is CalcAction.Delete -> Color(0xFFFF5252).copy(0.15f)
+        is CalcAction.Operation -> tealColor.copy(0.15f)
+        else -> MaterialTheme.colorScheme.surfaceVariant
     }
     val contentColor = if (data.action is CalcAction.Calculate) Color.White
     else if (data.action is CalcAction.Clear || data.action is CalcAction.Delete) Color(0xFFFF5252)
-    else Color.Black
+    else MaterialTheme.colorScheme.onSurface
 
     Surface(
         modifier = modifier

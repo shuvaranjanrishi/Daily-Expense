@@ -146,7 +146,7 @@ fun NoteScreen(
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()
-                .background(Color(0xFFF8F9FA))
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Spacer(modifier = Modifier.height(8.dp))
             NoteDisclaimerCard()
@@ -155,7 +155,7 @@ fun NoteScreen(
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(4.dp)
             ) {
                 Row(
@@ -170,12 +170,12 @@ fun NoteScreen(
                         TransactionSummaryRow(
                             stringResource(R.string.label_total_debt),
                             totalDebt.toString(),
-                            expenseRed
+                            MaterialTheme.colorScheme.error
                         )
                         TransactionSummaryRow(
                             stringResource(R.string.label_total_receivable),
                             totalReceivable.toString(),
-                            tealColor
+                            MaterialTheme.colorScheme.primary
                         )
                         HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
                         TransactionSummaryRow(
@@ -183,7 +183,7 @@ fun NoteScreen(
                                 R.string.label_net_debt
                             ),
                             balanceAmount.toString(),
-                            if (balanceAmount >= 0) tealColor else expenseRed
+                            if (balanceAmount >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                         )
                     }
                 }
@@ -262,7 +262,8 @@ fun NoteScreen(
     if (showSheet) {
         ModalBottomSheet(
             onDismissRequest = { showSheet = false },
-            sheetState = sheetState
+            sheetState = sheetState,
+            containerColor = MaterialTheme.colorScheme.surface
         ) {
             Box(modifier = Modifier.imePadding()) {
                 AddNoteForm(

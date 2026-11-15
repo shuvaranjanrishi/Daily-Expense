@@ -9,13 +9,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.therishideveloper.dailyexpense.data.model.Language
-import com.therishideveloper.dailyexpense.ui.theme.tealColor
 import com.therishideveloper.dailyexpense.R
 
 @Composable
@@ -27,13 +25,13 @@ fun LanguageDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         shape = RoundedCornerShape(20.dp),
-        containerColor = Color.White,
+        containerColor = MaterialTheme.colorScheme.surface,
         title = {
             Text(
                 text = stringResource(R.string.title_select_language),
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = tealColor
+                color = MaterialTheme.colorScheme.primary
             )
         },
         text = {
@@ -52,11 +50,19 @@ fun LanguageDialog(
                             text = lang.name,
                             fontSize = 18.sp,
                             modifier = Modifier.weight(1f),
-                            color = if (currentLanguageCode == lang.code) tealColor else Color.Black,
+                            color = if (currentLanguageCode == lang.code) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurface
+                            },
                             fontWeight = if (currentLanguageCode == lang.code) FontWeight.Bold else FontWeight.Normal
                         )
                         if (currentLanguageCode == lang.code) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = tealColor)
+                            Icon(
+                                Icons.Default.CheckCircle,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary
+                            )
                         }
                     }
                 }
@@ -65,8 +71,6 @@ fun LanguageDialog(
         confirmButton = {}
     )
 }
-
-
 
 val languages = listOf(
     Language("English", "en", "🇺🇸"),

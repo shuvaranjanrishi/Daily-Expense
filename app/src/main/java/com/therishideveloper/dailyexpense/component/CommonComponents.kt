@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -141,7 +142,7 @@ fun SolidPieChart(
 fun TransactionSummaryRow(
     label: String,
     amount: String,
-    labelColor: Color = Color.Black
+    labelColor: Color = MaterialTheme.colorScheme.onSurface
 ) {
     val context = LocalContext.current
     Row(
@@ -153,7 +154,8 @@ fun TransactionSummaryRow(
         Text(text = label, fontWeight = FontWeight.Bold, color = labelColor, fontSize = 13.sp)
         Text(
             text = NumberUtils.formatAmountByLocale(context, amount),
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -173,7 +175,7 @@ fun TransactionSummaryCard(
         modifier = Modifier
             .padding(horizontal = 12.dp, vertical = 8.dp)
             .fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(2.dp)
     ) {
         Row(modifier = Modifier.padding(12.dp), verticalAlignment = Alignment.CenterVertically) {
@@ -189,18 +191,18 @@ fun TransactionSummaryCard(
                 TransactionSummaryRow(
                     stringResource(R.string.income),
                     totalIncome.toString(),
-                    tealColor
+                    MaterialTheme.colorScheme.primary
                 )
                 TransactionSummaryRow(
                     stringResource(R.string.expense),
                     totalExpense.toString(),
-                    expenseRed
+                    MaterialTheme.colorScheme.error
                 )
                 HorizontalDivider(modifier = Modifier.padding(vertical = 6.dp))
                 TransactionSummaryRow(
                     stringResource(R.string.balance),
                     balance.toString(),
-                    if (balance >= 0) tealColor else expenseRed
+                    if (balance >= 0) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.error
                 )
             }
         }

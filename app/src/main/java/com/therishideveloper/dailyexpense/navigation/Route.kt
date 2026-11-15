@@ -43,13 +43,6 @@ val listOfNavItems = listOf(
 
     // Settings Section
     NavItem(
-        "Language",
-        "Settings",
-        Icons.Filled.Language,
-        Icons.Outlined.Language,
-        Screens.LanguageScreen.route
-    ),
-    NavItem(
         "Backup",
         "Settings",
         Icons.Filled.Backup,
